@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+	
     <!-- 导航栏 -->
     <header>
         <div class="container navbar">
@@ -23,6 +24,76 @@
             </ul>
         </div>
     </header>
+	  <div class="falling-images-container" id="fallingContainer"></div>
+
+    <script>
+        // 图片资源数组 - 可以替换为你自己的图片URL
+        const fallingImages = [
+            'img/丑的logo(白).png', // 红色心形
+            'img/100pxCDF.png', // 黄色星星
+            'img/tcbclogo.png', // 蓝色圆形
+            'img/sq.png', // 绿色叶子
+            'img/丑的logo.png'  // 紫色花朵
+        ];
+        
+        // 获取容器
+        const container = document.getElementById('fallingContainer');
+        
+        // 创建飘落的图片
+        function createFallingImage() {
+            const img = document.createElement('img');
+            img.src = fallingImages[Math.floor(Math.random() * fallingImages.length)];
+            img.className = 'falling-image';
+            
+            // 随机大小 (30px 到 70px)
+              const size = Math.random() * 50 + 30;
+            img.style.width = `${size}px`;
+            img.style.height = `${size}px`;
+            
+            // 随机起始位置
+            img.style.left = `${Math.random() * 100}vw`;
+            img.style.top = `-${size}px`;
+            
+           
+            
+            // 随机旋转起始角度
+            const rotation = Math.random() * 360;
+            
+            container.appendChild(img);
+            
+            // 创建动画
+             const animation = img.animate([
+                { 
+                    transform: `translateY(0) rotate(${rotation}deg)`
+                },
+                { 
+                    transform: `translateY(120vh) rotate(${rotation + 360}deg)`
+                }
+            ], {
+                duration: Math.random() * 3000 + 4700, // 6-10秒随机时长
+                easing: 'linear'
+            });
+            
+            // 动画结束后移除元素
+            animation.onfinish = () => {
+                if (img.parentNode) {
+                    img.parentNode.removeChild(img);
+                }
+            };
+        }
+        
+        // 每300毫秒创建一个新图片
+        setInterval(createFallingImage, 100);
+        
+        // 初始创建一些图片
+        for (let i = 0; i < 10; i++) {
+            setTimeout(() => createFallingImage(), i * 200);
+        }
+    </script>
+	<div >
+
+    
+		</div>
 
     <!-- 英雄区域 -->
     <section class="hero">
@@ -42,6 +113,8 @@
             </div>
         </div>
     </section>
+		
+	
 
     <!-- 产品特点 -->
     <section class="features">
