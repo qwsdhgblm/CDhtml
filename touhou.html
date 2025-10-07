@@ -364,6 +364,7 @@
         <div class="game-controls">
             <button id="pauseButton">暂停</button>
             <button id="videoButton">原版的视频</button>
+            <p ><br>         bgm:飘上月球，不死之烟</p>
         </div>
         
         <!-- 弹幕设计工具 -->
@@ -471,7 +472,7 @@
     </div>
 
     <!-- 音频元素 -->
-    <audio loop autoplay id="bgMusic" controls>
+    <audio loop autoplay id="bgMusic">
         <!-- 这里可以添加背景音乐文件 -->
         <source src="au/飘上月球，不死之烟.mp3" type="audio/mpeg">
         您的浏览器不支持音频元素。
@@ -660,7 +661,7 @@
             // 例如: images.player = new Image(); images.player.src = 'player.png';
             
             // 创建占位符图像（使用离屏canvas绘制）
-            images.player = createPlaceholderImage(16, 16, '#4cc9f0');
+            images.player = new Image(); images.player.src = 'img/pl0.png';
             images.enemy1 = createPlaceholderImage(24, 24, '#e94560');
             images.enemy2 = createPlaceholderImage(32, 32, '#f72585');
             images.bullet = createPlaceholderImage(4, 12, '#4cc9f0');
