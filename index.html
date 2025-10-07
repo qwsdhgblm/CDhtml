@@ -20,7 +20,7 @@
                 <div class="dcljye"><li><a href="CD_uzye.html">产品</a></li></div>
                 <div class="dcljye"><li><a href="#js">技术</a></li></div>
                 <div class="dcljye"><li><a href="myweb/index.html">关于我们</a></li></div>
-               <div class="dcljye"> <li><a href="#me">联系我们</a></li></div>
+               <div class="dcljye"> <li><a href="https://laoxu-qw-lianhe.my.canvasite.cn/">联系我们</a></li></div>
             </ul>
         </div>
     </header>
@@ -120,6 +120,7 @@
     <section class="features">
         <div class="container">
             <h2 class="section-title" id="js">产品特点</h2>
+			<p style="text-indent: 35vw">点击有效果</p>
             <div class="features-grid">
                 <div class="feature-card fade-in">
                     <div class="feature-icon">
@@ -226,6 +227,7 @@
                         <a href="#"><i class="fab fa-weixin"></i></a>
                         <a href="#"><i class="fab fa-tiktok"></i></a>
                         <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="touhou.html">好玩的</a>
                     </div>
                 </div>
                 <div class="footer-section">
@@ -270,6 +272,67 @@
                 element.style.transition = 'opacity 0.5s ease-in-out';
                 observer.observe(element);
             });
+        }); // 水波纹效果
+            const waterFeature = document.getElementById('waterFeature');
+            
+            waterFeature.addEventListener('click', function(e) {
+                // 创建水波纹
+                const ripple = document.createElement('span');
+                ripple.classList.add('water-ripple');
+                
+                // 计算点击位置
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // 设置水波纹位置和大小
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = `${size}px`;
+                ripple.style.left = `${x - size/2}px`;
+                ripple.style.top = `${y - size/2}px`;
+                
+                // 添加到卡片
+                this.appendChild(ripple);
+                
+                // 创建气泡效果
+                createBubbles(this, 5);
+                
+                // 动画结束后移除水波纹
+                setTimeout(() => {
+                    if (ripple.parentNode) {
+                        ripple.parentNode.removeChild(ripple);
+                    }
+                }, 800);
+            });
+            
+            // 创建气泡效果
+            function createBubbles(container, count) {
+                for (let i = 0; i < count; i++) {
+                    setTimeout(() => {
+                        const bubble = document.createElement('span');
+                        bubble.classList.add('water-bubble');
+                        
+                        // 随机大小和位置
+                        const size = Math.random() * 15 + 5;
+                        const left = Math.random() * 80 + 10; // 10% 到 90%
+                        
+                        bubble.style.width = `${size}px`;
+                        bubble.style.height = `${size}px`;
+                        bubble.style.left = `${left}%`;
+                        bubble.style.bottom = '0';
+                        
+                        // 添加到容器
+                        container.appendChild(bubble);
+                        
+                        // 动画结束后移除气泡
+                        setTimeout(() => {
+                            if (bubble.parentNode) {
+                                bubble.parentNode.removeChild(bubble);
+                            }
+                        }, 1500);
+                    }, i * 100);
+                }
+            }
         });
     </script>
 </body>
