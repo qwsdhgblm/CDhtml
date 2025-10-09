@@ -175,7 +175,8 @@
             position: absolute;
             top: 50px;
             right: 10px;
-            width: 350px;
+            width: 400px;
+            max-height: 80vh;
             background: rgba(0, 0, 0, 0.9);
             border: 2px solid #e94560;
             border-radius: 10px;
@@ -184,7 +185,6 @@
             display: none;
             z-index: 20;
             box-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
-            max-height: 80vh;
             overflow-y: auto;
         }
         .designer-panel h3 {
@@ -250,25 +250,29 @@
         .timeline-container {
             margin-top: 15px;
             border-top: 1px solid #444;
-            padding-top: 10px;
+            padding-top: 15px;
+        }
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
         }
         .timeline-controls {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
+            gap: 10px;
         }
         .timeline-controls button {
             margin: 0;
             padding: 5px 10px;
-            font-size: 12px;
         }
         .timeline {
             position: relative;
             height: 40px;
             background: rgba(50, 50, 70, 0.7);
             border-radius: 5px;
-            overflow: hidden;
             cursor: pointer;
+            overflow: hidden;
         }
         .timeline-indicator {
             position: absolute;
@@ -279,32 +283,35 @@
             background: #e94560;
             z-index: 2;
         }
+        .timeline-keyframes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
         .keyframe {
             position: absolute;
             top: 5px;
-            width: 10px;
+            width: 8px;
             height: 30px;
             background: #4cc9f0;
             border-radius: 2px;
-            z-index: 1;
+            transform: translateX(-50%);
             cursor: pointer;
+            z-index: 3;
         }
         .keyframe.active {
             background: #ffd166;
         }
-        .frame-input {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
-        .frame-input label {
-            margin-right: 10px;
-            font-size: 12px;
-        }
-        .frame-input input {
+        .timeline-frame-input {
             width: 60px;
             padding: 3px;
-            font-size: 12px;
+            border-radius: 3px;
+            border: 1px solid #444;
+            background: #222;
+            color: white;
+            text-align: center;
         }
         
         /* 游戏控制按钮 */
@@ -317,12 +324,7 @@
         }
         .game-controls button {
             margin: 0;
-            padding: 5px 10px;
-            font-size: 14px;
-            background: rgba(76, 201, 240, 0.8);
-        }
-        .game-controls button:hover {
-            background: rgba(76, 201, 240, 1);
+            padding: 8px 15px;
         }
         
         @media (max-width: 768px) {
@@ -337,9 +339,6 @@
                 width: 90%;
                 right: 5%;
                 top: 60px;
-            }
-            .game-controls {
-                flex-direction: column;
             }
         }
     </style>
@@ -359,19 +358,27 @@
         </div>
         
         <div class="spell-card-name" id="spellCardName"></div>
-            <a href="thmb.html" style="color: azure;font-size: 1vw;">前往手机端（这样用手机好打）</a>
         
         <!-- 游戏控制按钮 -->
         <div class="game-controls">
+            <a href="touhou.html" style="color: azure;">前往电脑端</a>
             <button id="pauseButton">暂停</button>
-            <button id="videoButton">原版的视频</button>
-            <p ><br>         bgm:飘上月球，不死之烟</p>
+            <button id="originalVideoButton">原版的视频</button>
+              <p ><br>         bgm:飘上月球，不死之烟</p>
+        </div>
+        
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div class="instructions">
+            移动鼠标控制自机移动方向 | Z键发射子弹 | X键使用炸弹 | Shift键慢速移动
+        </div>
+        <div class="controls-info">
+            控制方式: 鼠标移动方向 | 射击: Z键 或 自动射击 | 炸弹: X键 | 慢速: Shift键 | 暂停: P键或暂停按钮
         </div>
         
         <!-- 弹幕设计工具 -->
         <button class="designer-toggle" id="designerToggle">弹幕设计工具</button>
         <div class="designer-panel" id="designerPanel">
-            <h3>弹幕设计工具</h3>
+            <h3>高级弹幕设计工具</h3>
             
             <div class="design-control">
                 <label>弹幕类型: 
@@ -386,26 +393,31 @@
             <div class="design-control">
                 <label>子弹数量: <span class="range-value" id="bulletCountValue">12</span></label>
                 <input type="range" id="bulletCount" min="4" max="36" value="12">
+                <button class="add-keyframe" data-param="bulletCount">添加关键帧</button>
             </div>
             
             <div class="design-control">
                 <label>子弹速度: <span class="range-value" id="bulletSpeedValue">3</span></label>
                 <input type="range" id="bulletSpeed" min="1" max="6" step="0.5" value="3">
+                <button class="add-keyframe" data-param="bulletSpeed">添加关键帧</button>
             </div>
             
             <div class="design-control">
                 <label>子弹大小: <span class="range-value" id="bulletSizeValue">8</span></label>
                 <input type="range" id="bulletSize" min="4" max="15" value="8">
+                <button class="add-keyframe" data-param="bulletSize">添加关键帧</button>
             </div>
             
             <div class="design-control">
                 <label>子弹颜色:</label>
                 <input type="color" id="bulletColor" value="#ff006e">
+                <button class="add-keyframe" data-param="bulletColor">添加关键帧</button>
             </div>
             
             <div class="design-control">
                 <label>发射间隔: <span class="range-value" id="fireRateValue">10</span></label>
                 <input type="range" id="fireRate" min="5" max="30" value="10">
+                <button class="add-keyframe" data-param="fireRate">添加关键帧</button>
             </div>
             
             <div class="design-control">
@@ -413,26 +425,27 @@
                 <input type="range" id="bossProbability" min="0" max="100" value="20">
             </div>
             
+            <div class="preview-area">
+                <canvas id="previewCanvas" width="400" height="150"></canvas>
+            </div>
+            
             <!-- 时间轴 -->
             <div class="timeline-container">
-                <h4>时间轴</h4>
-                <div class="timeline-controls">
-                    <button id="addKeyframe">添加关键帧</button>
-                    <button id="deleteKeyframe">删除关键帧</button>
-                    <button id="playPausePreview">播放</button>
+                <div class="timeline-header">
+                    <div>时间轴</div>
+                    <div>
+                        <input type="number" class="timeline-frame-input" id="currentFrameInput" value="0" min="0" max="300">
+                        <span>/300帧</span>
+                    </div>
+                    <div class="timeline-controls">
+                        <button id="timelinePlayPause">播放</button>
+                        <button id="deleteKeyframe">删除关键帧</button>
+                    </div>
                 </div>
                 <div class="timeline" id="timeline">
                     <div class="timeline-indicator" id="timelineIndicator"></div>
-                    <!-- 关键帧会动态添加到这里 -->
+                    <div class="timeline-keyframes" id="timelineKeyframes"></div>
                 </div>
-                <div class="frame-input">
-                    <label>当前帧:</label>
-                    <input type="number" id="currentFrame" min="0" max="100" value="0">
-                </div>
-            </div>
-            
-            <div class="preview-area">
-                <canvas id="previewCanvas" width="350" height="150"></canvas>
             </div>
             
             <div class="design-buttons">
@@ -440,14 +453,6 @@
                 <button id="saveButton">保存</button>
                 <button id="closeButton">关闭</button>
             </div>
-        </div>
-        
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
-        <div class="instructions">
-            移动鼠标或使用方向键控制自机 | Z键发射子弹 | X键使用炸弹 | Shift键慢速移动
-        </div>
-        <div class="controls-info">
-            控制方式: 鼠标移动 或 方向键 | 射击: Z键 或 自动射击 | 炸弹: X键 | 慢速: Shift键 | 暂停: P键
         </div>
         
         <div class="mobile-controls">
@@ -463,33 +468,32 @@
         
         <div id="gamePause" class="game-pause">
             <h2>游戏暂停</h2>
-            <p>按P键继续游戏</p>
+            <p>按P键或点击继续按钮继续游戏</p>
             <button id="resumeButton">继续游戏</button>
         </div>
         
         <div id="bossWarning" class="boss-warning">
-           
+            <h2>BOSS 出现!</h2>
+            <p>准备迎接挑战!</p>
         </div>
     </div>
 
     <!-- 音频元素 -->
-    <audio loop autoplay id="bgMusic">
+    <audio id="bgMusic" loop autoplay src="au/飘上月球，不死之烟.mp3" type="audio/mpeg">
         <!-- 这里可以添加背景音乐文件 -->
-        <source src="au/飘上月球，不死之烟.mp3" type="audio/mpeg">
+        <!-- <source src="bgm.mp3" type="audio/mpeg"> -->
         您的浏览器不支持音频元素。
     </audio>
 
     <script>
-        window.addEventListener('load', function() {
-  var audio = document.getElementById('bgMusic');
-  audio.play();
-});
-
         // 获取Canvas和上下文
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const previewCanvas = document.getElementById('previewCanvas');
         const previewCtx = previewCanvas.getContext('2d');
+
+        // 音频元素
+        const bgMusic = document.getElementById('bgMusic');
 
         // 游戏状态
         let gameState = {
@@ -507,9 +511,8 @@
             bombEffect: null,
             useKeyboard: false, // 标记是否使用键盘控制
             customBulletPatterns: [], // 存储自定义弹幕模式
-            bossProbability: 20, // Boss使用自定义弹幕的概率
-            bossStage: 1, // Boss关卡数
-            bossDefeated: false // Boss是否已被击败
+            bossCycle: 1, // Boss关卡循环计数
+            bossProbability: 20 // Boss使用自定义弹幕的概率
         };
 
         // 符卡数据
@@ -537,7 +540,9 @@
             invincible: 0, // 无敌时间
             shootDelay: 0,
             homingShootDelay: 0,
-            manualShoot: false // 手动射击标记
+            manualShoot: false, // 手动射击标记
+            lastMouseX: 0, // 上一帧鼠标X坐标
+            lastMouseY: 0  // 上一帧鼠标Y坐标
         };
 
         // 敌机数组
@@ -575,10 +580,13 @@
         let designerOpen = false;
         let previewBullets = [];
         let previewTimer = 0;
-        let isPreviewPlaying = false;
-        let keyframes = [];
+        let previewPlaying = false;
+        
+        // 时间轴状态
         let currentFrame = 0;
-        let maxFrames = 100;
+        let maxFrames = 300;
+        let keyframes = [];
+        let timelinePlaying = false;
 
         // 初始化游戏
         function init() {
@@ -597,9 +605,8 @@
                 bombEffect: null,
                 useKeyboard: false,
                 customBulletPatterns: [],
-                bossProbability: 20,
-                bossStage: 1,
-                bossDefeated: false
+                bossCycle: 1,
+                bossProbability: 20
             };
             
             player.x = canvas.width / 2;
@@ -609,6 +616,8 @@
             player.bombCount = 3;
             player.invincible = 120; // 开始时有短暂无敌时间
             player.manualShoot = false;
+            player.lastMouseX = canvas.width / 2;
+            player.lastMouseY = canvas.height - 100;
             
             enemies = [];
             enemyBullets = [];
@@ -628,31 +637,34 @@
             designerOpen = false;
             
             // 重置时间轴
-            keyframes = [];
             currentFrame = 0;
-            updateTimeline();
+            keyframes = [];
+            updateTimelineIndicator();
+            renderKeyframes();
             
             updateUI();
             
             // 加载图像资源（这里使用占位符，实际使用时可以替换为真实图像）
             loadImages();
             
-            // 尝试播放背景音乐
-            playBackgroundMusic();
-            
             // 开始游戏循环
             gameLoop();
+            
+            // 尝试播放背景音乐（需要用户交互）
+            tryPlayBackgroundMusic();
         }
 
-        // 播放背景音乐
-        function playBackgroundMusic() {
-            const bgMusic = document.getElementById('bgMusic');
-            bgMusic.volume = 0.5; // 设置音量
+        // 尝试播放背景音乐
+        function tryPlayBackgroundMusic() {
+            // 设置音量
+            bgMusic.volume = 0.5;
             
-            // 尝试播放音乐
-            bgMusic.play().catch(error => {
-                console.log("自动播放被阻止，需要用户交互");
-                // 可以在这里添加一个按钮，让用户手动播放音乐
+            // 尝试播放（需要用户交互）
+            document.addEventListener('click', function startAudio() {
+                bgMusic.play().catch(e => {
+                    console.log('音频播放失败:', e);
+                });
+                document.removeEventListener('click', startAudio);
             });
         }
 
@@ -1074,12 +1086,12 @@
                 x: canvas.width / 2,
                 y: 100,
                 radius: 40,
-                health: 100 * gameState.bossStage, // 随关卡增加生命值
-                maxHealth: 100 * gameState.bossStage,
+                health: 100 + (gameState.bossCycle - 1) * 20, // Boss血量随循环次数增加
+                maxHealth: 100 + (gameState.bossCycle - 1) * 20,
                 speed: 1,
                 color: '#f72585',
                 patternTimer: 0,
-                patternChangeDelay: 180, // 每180帧切换一次攻击模式
+                patternChangeDelay: 180 - (gameState.bossCycle - 1) * 10, // Boss攻击频率随循环次数增加
                 currentPattern: 0,
                 moveDirection: 1
             };
@@ -1090,7 +1102,7 @@
 
         // 更改符卡
         function changeSpellCard() {
-            // 根据概率使用自定义弹幕
+            // 根据设置的概率使用自定义弹幕
             if (gameState.customBulletPatterns.length > 0 && Math.random() * 100 < gameState.bossProbability) {
                 const customPattern = gameState.customBulletPatterns[
                     Math.floor(Math.random() * gameState.customBulletPatterns.length)
@@ -1263,14 +1275,14 @@
                 const offset = (i - (homingBulletCount - 1) / 2) * 8;
                 player.homingBullets.push({
                     x: player.x + offset,
-                    y: player.y - offset,
-                    speed: 4,
+                    y: player.y - 10,
+                    speed: 6,
                     target: null,
-                    life: 999 // 诱导弹存在时间
+                    life: 300 // 诱导弹存在时间
                 });
             }
             
-            player.homingShootDelay = 100; // 3秒冷却时间
+            player.homingShootDelay = 180; // 3秒冷却时间
         }
 
         // 更新诱导弹
@@ -1551,14 +1563,13 @@
                             // Boss被击毁
                             createParticles(boss.x, boss.y, boss.color, 50);
                             gameState.bossActive = false;
-                            gameState.bossDefeated = true;
                             boss = null;
                             document.getElementById('spellCardName').style.display = 'none';
                             
                             // 增加大量分数
-                            gameState.score += 5000 * gameState.bossStage;
+                            gameState.score += 5000;
                             gameState.level++;
-                            gameState.bossStage++;
+                            gameState.bossCycle++;
                             
                             // 重置Boss生成分数
                             gameState.bossSpawnScore = gameState.score + 2000;
@@ -1618,14 +1629,13 @@
                             // Boss被击毁
                             createParticles(boss.x, boss.y, boss.color, 50);
                             gameState.bossActive = false;
-                            gameState.bossDefeated = true;
                             boss = null;
                             document.getElementById('spellCardName').style.display = 'none';
                             
                             // 增加大量分数
-                            gameState.score += 5000 * gameState.bossStage;
+                            gameState.score += 5000;
                             gameState.level++;
-                            gameState.bossStage++;
+                            gameState.bossCycle++;
                             
                             // 重置Boss生成分数
                             gameState.bossSpawnScore = gameState.score + 2000;
@@ -1730,12 +1740,10 @@
                 ctx.fill();
             }
             
-            // 显示Boss关卡
-            if (gameState.bossStage > 1) {
-                ctx.fillStyle = '#fff';
-                ctx.font = '16px Arial';
-                ctx.fillText(`Boss关卡: ${gameState.bossStage}`, canvas.width - 150, 40);
-            }
+            // 绘制Boss关卡循环计数
+            ctx.fillStyle = '#fff';
+            ctx.font = '14px Arial';
+            ctx.fillText(`Boss关卡: ${gameState.bossCycle}`, 20, canvas.height - 20);
         }
 
         // 游戏主循环
@@ -1744,7 +1752,7 @@
             draw();
             
             // 如果设计工具打开，更新预览
-            if (designerOpen && isPreviewPlaying) {
+            if (designerOpen && previewPlaying) {
                 updatePreview();
             }
             
@@ -1812,12 +1820,13 @@
                     if (boss.health <= 0) {
                         createParticles(boss.x, boss.y, boss.color, 50);
                         gameState.bossActive = false;
-                        gameState.bossDefeated = true;
                         boss = null;
                         document.getElementById('spellCardName').style.display = 'none';
-                        gameState.score += 5000 * gameState.bossStage;
+                        gameState.score += 5000;
                         gameState.level++;
-                        gameState.bossStage++;
+                        gameState.bossCycle++;
+                        
+                        // 重置Boss生成分数
                         gameState.bossSpawnScore = gameState.score + 2000;
                     }
                 }
@@ -1836,9 +1845,6 @@
                 previewBullets = [];
                 previewTimer = 0;
                 updatePreview();
-            } else {
-                isPreviewPlaying = false;
-                document.getElementById('playPausePreview').textContent = '播放';
             }
         }
 
@@ -1968,54 +1974,178 @@
         }
 
         // 时间轴功能
-        function updateTimeline() {
-            const timeline = document.getElementById('timeline');
+        function updateTimelineIndicator() {
             const indicator = document.getElementById('timelineIndicator');
+            const percentage = (currentFrame / maxFrames) * 100;
+            indicator.style.left = `${percentage}%`;
+            document.getElementById('currentFrameInput').value = currentFrame;
+        }
+
+        function renderKeyframes() {
+            const container = document.getElementById('timelineKeyframes');
+            container.innerHTML = '';
             
-            // 更新指示器位置
-            indicator.style.left = `${(currentFrame / maxFrames) * 100}%`;
-            
-            // 清除现有关键帧
-            const existingKeyframes = timeline.querySelectorAll('.keyframe');
-            existingKeyframes.forEach(kf => kf.remove());
-            
-            // 添加关键帧
-            keyframes.forEach(frame => {
-                const keyframe = document.createElement('div');
-                keyframe.className = 'keyframe';
-                keyframe.style.left = `${(frame / maxFrames) * 100}%`;
-                keyframe.dataset.frame = frame;
-                
-                // 如果当前帧是关键帧，添加活动状态
-                if (frame === currentFrame) {
-                    keyframe.classList.add('active');
+            keyframes.forEach(keyframe => {
+                const element = document.createElement('div');
+                element.className = 'keyframe';
+                if (keyframe.frame === currentFrame) {
+                    element.classList.add('active');
                 }
-                
-                keyframe.addEventListener('click', () => {
-                    currentFrame = frame;
-                    document.getElementById('currentFrame').value = currentFrame;
-                    updateTimeline();
-                });
-                
-                timeline.appendChild(keyframe);
+                element.style.left = `${(keyframe.frame / maxFrames) * 100}%`;
+                element.dataset.frame = keyframe.frame;
+                container.appendChild(element);
             });
         }
 
-        // 添加关键帧
-        function addKeyframe() {
-            if (!keyframes.includes(currentFrame)) {
-                keyframes.push(currentFrame);
-                keyframes.sort((a, b) => a - b);
-                updateTimeline();
+        function addKeyframe(param) {
+            // 检查是否已存在当前帧的关键帧
+            const existingIndex = keyframes.findIndex(k => k.frame === currentFrame);
+            
+            if (existingIndex !== -1) {
+                // 更新现有关键帧
+                keyframes[existingIndex][param] = getParamValue(param);
+            } else {
+                // 添加新关键帧
+                const keyframe = {
+                    frame: currentFrame,
+                    [param]: getParamValue(param)
+                };
+                keyframes.push(keyframe);
+                
+                // 按帧数排序
+                keyframes.sort((a, b) => a.frame - b.frame);
+            }
+            
+            renderKeyframes();
+        }
+
+        function getParamValue(param) {
+            switch (param) {
+                case 'bulletCount':
+                    return parseInt(document.getElementById('bulletCount').value);
+                case 'bulletSpeed':
+                    return parseFloat(document.getElementById('bulletSpeed').value);
+                case 'bulletSize':
+                    return parseInt(document.getElementById('bulletSize').value);
+                case 'bulletColor':
+                    return document.getElementById('bulletColor').value;
+                case 'fireRate':
+                    return parseInt(document.getElementById('fireRate').value);
+                default:
+                    return null;
             }
         }
 
-        // 删除关键帧
+        function setParamValue(param, value) {
+            switch (param) {
+                case 'bulletCount':
+                    document.getElementById('bulletCount').value = value;
+                    document.getElementById('bulletCountValue').textContent = value;
+                    break;
+                case 'bulletSpeed':
+                    document.getElementById('bulletSpeed').value = value;
+                    document.getElementById('bulletSpeedValue').textContent = value;
+                    break;
+                case 'bulletSize':
+                    document.getElementById('bulletSize').value = value;
+                    document.getElementById('bulletSizeValue').textContent = value;
+                    break;
+                case 'bulletColor':
+                    document.getElementById('bulletColor').value = value;
+                    break;
+                case 'fireRate':
+                    document.getElementById('fireRate').value = value;
+                    document.getElementById('fireRateValue').textContent = value;
+                    break;
+            }
+        }
+
         function deleteKeyframe() {
-            const index = keyframes.indexOf(currentFrame);
+            const index = keyframes.findIndex(k => k.frame === currentFrame);
             if (index !== -1) {
                 keyframes.splice(index, 1);
-                updateTimeline();
+                renderKeyframes();
+            }
+        }
+
+        function updateParamsFromKeyframes() {
+            if (keyframes.length === 0) return;
+            
+            // 找到当前帧之前和之后的关键帧
+            let prevFrame = null;
+            let nextFrame = null;
+            
+            for (let i = 0; i < keyframes.length; i++) {
+                if (keyframes[i].frame <= currentFrame) {
+                    prevFrame = keyframes[i];
+                }
+                if (keyframes[i].frame >= currentFrame) {
+                    nextFrame = keyframes[i];
+                    break;
+                }
+            }
+            
+            // 如果没有关键帧在当前位置之前，使用第一个关键帧
+            if (!prevFrame && nextFrame) {
+                Object.keys(nextFrame).forEach(param => {
+                    if (param !== 'frame') {
+                        setParamValue(param, nextFrame[param]);
+                    }
+                });
+                return;
+            }
+            
+            // 如果没有关键帧在当前位置之后，使用最后一个关键帧
+            if (!nextFrame && prevFrame) {
+                Object.keys(prevFrame).forEach(param => {
+                    if (param !== 'frame') {
+                        setParamValue(param, prevFrame[param]);
+                    }
+                });
+                return;
+            }
+            
+            // 线性插值
+            if (prevFrame && nextFrame && prevFrame.frame !== nextFrame.frame) {
+                const t = (currentFrame - prevFrame.frame) / (nextFrame.frame - prevFrame.frame);
+                
+                Object.keys(prevFrame).forEach(param => {
+                    if (param !== 'frame' && nextFrame[param] !== undefined) {
+                        if (param === 'bulletColor') {
+                            // 颜色插值比较复杂，这里简单处理为使用前一个关键帧的颜色
+                            setParamValue(param, prevFrame[param]);
+                        } else {
+                            const value = prevFrame[param] + (nextFrame[param] - prevFrame[param]) * t;
+                            setParamValue(param, value);
+                        }
+                    }
+                });
+            } else if (prevFrame) {
+                // 当前位置正好是关键帧
+                Object.keys(prevFrame).forEach(param => {
+                    if (param !== 'frame') {
+                        setParamValue(param, prevFrame[param]);
+                    }
+                });
+            }
+        }
+
+        function toggleTimelinePlayback() {
+            timelinePlaying = !timelinePlaying;
+            document.getElementById('timelinePlayPause').textContent = timelinePlaying ? '暂停' : '播放';
+        }
+
+        function updateTimeline() {
+            if (timelinePlaying) {
+                currentFrame = (currentFrame + 1) % (maxFrames + 1);
+                updateTimelineIndicator();
+                updateParamsFromKeyframes();
+                renderKeyframes();
+                
+                if (designerOpen && previewPlaying) {
+                    previewBullets = [];
+                    previewTimer = 0;
+                }
             }
         }
 
@@ -2036,8 +2166,8 @@
                 size: bulletSize,
                 color: bulletColor,
                 fireRate: fireRate,
-                name: `自定义弹幕 ${gameState.customBulletPatterns.length + 1}`,
-                keyframes: [...keyframes] // 保存关键帧
+                keyframes: [...keyframes],
+                name: `自定义弹幕 ${gameState.customBulletPatterns.length + 1}`
             };
             
             gameState.customBulletPatterns.push(customPattern);
@@ -2051,12 +2181,28 @@
             const scaleX = canvas.width / rect.width;
             const scaleY = canvas.height / rect.height;
             
-            player.x = (e.clientX - rect.left) * scaleX;
-            player.y = (e.clientY - rect.top) * scaleY;
+            const mouseX = (e.clientX - rect.left) * scaleX;
+            const mouseY = (e.clientY - rect.top) * scaleY;
+            
+            // 使用相对坐标移动自机
+            const deltaX = mouseX - player.lastMouseX;
+            const deltaY = mouseY - player.lastMouseY;
+            
+            // 限制最大移动速度
+            const maxDelta = 10;
+            const moveX = Math.max(-maxDelta, Math.min(maxDelta, deltaX));
+            const moveY = Math.max(-maxDelta, Math.min(maxDelta, deltaY));
+            
+            player.x += moveX;
+            player.y += moveY;
             
             // 限制自机在屏幕内
             player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, player.x));
             player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, player.y));
+            
+            // 更新上一帧鼠标位置
+            player.lastMouseX = mouseX;
+            player.lastMouseY = mouseY;
             
             // 标记为使用鼠标控制
             gameState.useKeyboard = false;
@@ -2070,12 +2216,28 @@
             const scaleX = canvas.width / rect.width;
             const scaleY = canvas.height / rect.height;
             
-            player.x = (touch.clientX - rect.left) * scaleX;
-            player.y = (touch.clientY - rect.top) * scaleY;
+            const touchX = (touch.clientX - rect.left) * scaleX;
+            const touchY = (touch.clientY - rect.top) * scaleY;
+            
+            // 使用相对坐标移动自机
+            const deltaX = touchX - player.lastMouseX;
+            const deltaY = touchY - player.lastMouseY;
+            
+            // 限制最大移动速度
+            const maxDelta = 10;
+            const moveX = Math.max(-maxDelta, Math.min(maxDelta, deltaX));
+            const moveY = Math.max(-maxDelta, Math.min(maxDelta, deltaY));
+            
+            player.x += moveX;
+            player.y += moveY;
             
             // 限制自机在屏幕内
             player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, player.x));
             player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, player.y));
+            
+            // 更新上一帧触摸位置
+            player.lastMouseX = touchX;
+            player.lastMouseY = touchY;
         }, { passive: false });
 
         // 键盘事件
@@ -2135,34 +2297,44 @@
         document.getElementById('previewButton').addEventListener('click', () => {
             previewBullets = [];
             previewTimer = 0;
+            previewPlaying = true;
         });
         document.getElementById('saveButton').addEventListener('click', saveCustomPattern);
         document.getElementById('closeButton').addEventListener('click', toggleDesigner);
 
         // 时间轴事件
-        document.getElementById('addKeyframe').addEventListener('click', addKeyframe);
-        document.getElementById('deleteKeyframe').addEventListener('click', deleteKeyframe);
-        document.getElementById('playPausePreview').addEventListener('click', () => {
-            isPreviewPlaying = !isPreviewPlaying;
-            document.getElementById('playPausePreview').textContent = isPreviewPlaying ? '暂停' : '播放';
-        });
-
-        // 时间轴点击事件
         document.getElementById('timeline').addEventListener('click', (e) => {
             const rect = e.target.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             const percentage = clickX / rect.width;
-            currentFrame = Math.round(percentage * maxFrames);
-            document.getElementById('currentFrame').value = currentFrame;
-            updateTimeline();
+            currentFrame = Math.floor(percentage * maxFrames);
+            updateTimelineIndicator();
+            updateParamsFromKeyframes();
+            renderKeyframes();
         });
 
-        // 当前帧输入事件
-        document.getElementById('currentFrame').addEventListener('change', (e) => {
-            currentFrame = parseInt(e.target.value);
-            if (currentFrame < 0) currentFrame = 0;
-            if (currentFrame > maxFrames) currentFrame = maxFrames;
-            updateTimeline();
+        document.getElementById('timelinePlayPause').addEventListener('click', toggleTimelinePlayback);
+        document.getElementById('deleteKeyframe').addEventListener('click', deleteKeyframe);
+
+        document.getElementById('currentFrameInput').addEventListener('change', (e) => {
+            currentFrame = Math.max(0, Math.min(maxFrames, parseInt(e.target.value) || 0));
+            updateTimelineIndicator();
+            updateParamsFromKeyframes();
+            renderKeyframes();
+        });
+
+        // 添加关键帧按钮事件
+        document.querySelectorAll('.add-keyframe').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const param = e.target.dataset.param;
+                addKeyframe(param);
+            });
+        });
+
+        // 游戏控制按钮事件
+        document.getElementById('pauseButton').addEventListener('click', togglePause);
+        document.getElementById('originalVideoButton').addEventListener('click', () => {
+            window.open('https://www.youtube.com/watch?v=EXAMPLE', '_blank'); // 替换为实际视频链接
         });
 
         // 更新范围输入值的显示
@@ -2176,17 +2348,14 @@
             });
         });
 
-        // 游戏控制按钮事件
-        document.getElementById('pauseButton').addEventListener('click', togglePause);
-        document.getElementById('videoButton').addEventListener('click', () => {
-            window.open('https://www.bilibili.com/video/BV15f421m7o7/?share_source=copy_web&vd_source=df6488b7508cf4c5861865a5eb617752', '_blank'); // 替换为实际视频链接
-        });
-
         document.getElementById('restartButton').addEventListener('click', init);
         document.getElementById('resumeButton').addEventListener('click', togglePause);
 
         // 启动游戏
         init();
+        
+        // 时间轴更新循环
+        setInterval(updateTimeline, 1000 / 30); // 30 FPS
     </script>
 </body>
 </html>
