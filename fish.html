@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鱼缸</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            color: #2c3e50;
+        }
+        
+        .aquarium-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            margin: 0 auto 30px;
+            perspective: 1000px;
+        }
+        
+        .aquarium {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #f0f8ff; /* 浅蓝色背景而不是水 */
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 0 50px rgba(0, 0, 0, 0.3),
+                0 20px 50px rgba(0, 0, 0, 0.2);
+            border: 15px solid #c8c8c8;
+            border-top: 5px solid #e0e0e0;
+            border-bottom: 25px solid #a0a0a0;
+            transition: all 2s ease;
+        }
+        
+        .water-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .water {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(30, 136, 229, 0.7), rgba(33, 150, 243, 0.3));
+            transition: height 5s ease;
+        }
+        
+        .sand {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(to bottom, #d7ccc8, #bcaaa4);
+            border-top: 5px solid #a1887f;
+            z-index: 10;
+        }
+        
+        .decoration {
+            position: absolute;
+            bottom: 80px;
+            width: 100%;
+            height: 100px;
+            z-index: 5;
+        }
+        
+        .rock {
+            position: absolute;
+            bottom: 0;
+            width: 80px;
+            height: 60px;
+            background: #795548;
+            border-radius: 50% 50% 0 0;
+        }
+        
+        .rock1 {
+            left: 20%;
+        }
+        
+        .rock2 {
+            right: 30%;
+            width: 100px;
+            height: 70px;
+        }
+        
+        .plant {
+            position: absolute;
+            bottom: 0;
+            width: 20px;
+            height: 100px;
+            background: linear-gradient(to top, #4caf50, #2e7d32);
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .plant1 {
+            left: 40%;
+            height: 120px;
+        }
+        
+        .plant2 {
+            right: 20%;
+            height: 80px;
+        }
+        
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            animation: bubble-rise linear infinite;
+        }
+        
+        @keyframes bubble-rise {
+            0% {
+                bottom: 0;
+                opacity: 0.7;
+            }
+            100% {
+                bottom: 100%;
+                opacity: 0;
+            }
+        }
+        
+        .fish {
+            position: absolute;
+            width: 60px;
+            height: 30px;
+            transition: transform 0.5s;
+            z-index: 10;
+        }
+        
+        .fish-body {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff9800, #ff5722);
+            border-radius: 50% 40% 40% 50%;
+            box-shadow: inset -5px 0 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .fish-tail {
+            position: absolute;
+            left: -15px;
+            top: 5px;
+            width: 25px;
+            height: 25px;
+            background: linear-gradient(to right, #ff5722, #ff7043);
+            border-radius: 50% 0 0 50%;
+            clip-path: polygon(0 0, 100% 25%, 100% 75%, 0 100%);
+            transform-origin: right center;
+            animation: tail-move 0.5s ease-in-out infinite alternate;
+        }
+        
+        @keyframes tail-move {
+            0% {
+                transform: rotateY(-10deg);
+            }
+            100% {
+                transform: rotateY(10deg);
+            }
+        }
+        
+        .fish-fin {
+            position: absolute;
+            top: -5px;
+            left: 20px;
+            width: 10px;
+            height: 15px;
+            background: #ff9800;
+            clip-path: polygon(0 0, 100% 50%, 0 100%);
+        }
+        
+        .fish-eye {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: #000;
+            border-radius: 50%;
+        }
+        
+        .dead-fish {
+            filter: grayscale(1) brightness(0.7);
+            opacity: 0.8;
+        }
+        
+        .dead-fish .fish-tail {
+            animation: none;
+        }
+        
+        .food {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ffeb3b;
+            border-radius: 50%;
+            z-index: 5;
+            box-shadow: 0 0 5px #ff9800;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            z-index: 100;
+            position: relative;
+        }
+        
+        button {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            background: #87CEEB;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background: #6CB4EE;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .stats {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            z-index: 100;
+            position: relative;
+        }
+        
+        .fish-count {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .food-count {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        /* 锤子按钮样式 */
+        .hammer-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .aquarium-container:hover .hammer-btn {
+            opacity: 1;
+        }
+        
+        /* 玻璃碎片样式 */
+        .glass-shard {
+            position: absolute;
+            background: rgba(200, 200, 200, 0.8);
+            border: 1px solid #aaa;
+            z-index: 20;
+            transform-origin: center;
+        }
+        
+        /* 页面底部水域样式 */
+        .floor-water {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: linear-gradient(to top, rgba(106, 183, 255, 0.7), rgba(30, 136, 229, 0.3));
+            transition: height 5s ease;
+            z-index: 5;
+            overflow: hidden;
+        }
+        
+        /* 鱼缸破裂状态 */
+        .aquarium-broken {
+            border-color: transparent;
+            box-shadow: none;
+            transform: scale(0.95);
+        }
+        
+        .aquarium-broken .water {
+            height: 0;
+        }
+        
+        /* 惊慌的鱼 */
+        .panicked-fish {
+            animation: panic 0.3s infinite alternate;
+        }
+        
+        @keyframes panic {
+            0% {
+                transform: translateX(0) rotate(0);
+            }
+            100% {
+                transform: translateX(5px) rotate(5deg);
+            }
+        }
+        
+        /* 作弊模式窗口 */
+        .cheat-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+        }
+        
+        .cheat-modal input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        .obstacle-panel {
+            display: none;
+            position: fixed;
+            top: 100px;
+            left: 50px;
+            width: 300px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1500;
+            cursor: move;
+        }
+        
+        .obstacle-panel-header {
+            padding: 10px;
+            background: #87CEEB;
+            color: white;
+            border-radius: 10px 10px 0 0;
+            cursor: move;
+        }
+        
+        .obstacle-list {
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .obstacle-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: #f0f0f0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .obstacle-item:hover {
+            background: #e0e0e0;
+        }
+        
+        .obstacle-item.selected {
+            background: #87CEEB;
+            color: white;
+        }
+        
+        .place-obstacle-btn {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 0;
+            cursor: pointer;
+        }
+        
+        .place-obstacle-btn:hover {
+            background: #45a049;
+        }
+        
+        /* 障碍物样式 */
+        .obstacle {
+            position: absolute;
+            z-index: 30;
+        }
+        
+        .obstacle.circle {
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.3);
+            border: 2px solid red;
+        }
+        
+        .obstacle.square {
+            background: rgba(0, 0, 255, 0.3);
+            border: 2px solid blue;
+        }
+        
+        .obstacle.triangle {
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 50px solid rgba(0, 255, 0, 0.3);
+            background: transparent;
+        }
+        
+        .obstacle.preview {
+            opacity: 0.7;
+        }
+        
+        /* 跟随鼠标的鱼 */
+        .fish-following {
+            filter: brightness(1.3);
+            transition: all 0.5s ease;
+        }
+        
+        /* 作弊模式控制面板 */
+        .cheat-controls {
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .cheat-control {
+            margin: 10px 0;
+        }
+        
+        .cheat-control label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .cheat-control input {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .time-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .time-controls button {
+            flex: 1;
+            padding: 8px;
+        }
+        
+        /* 时间暂停状态 */
+        .paused .fish,
+        .paused .fish-tail,
+        .paused .bubble {
+            animation-play-state: paused !important;
+        }
+        
+        .paused-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            z-index: 3000;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>这是一个鱼缸</h1>
+        
+        <div class="aquarium-container">
+            <div class="aquarium">
+                <div class="water-container">
+                    <div class="water"></div>
+                </div>
+                <div class="sand"></div>
+                <div class="decoration">
+                    <div class="rock rock1"></div>
+                    <div class="rock rock2"></div>
+                    <div class="plant plant1"></div>
+                    <div class="plant plant2"></div>
+                </div>
+                <!-- 鱼和饲料将通过JavaScript动态添加 -->
+            </div>
+            <button class="hammer-btn" id="hammerBtn">🔨</button>
+        </div>
+        
+        <div class="stats">
+            <div>鱼的数量: <span id="fishCount" class="fish-count">0</span></div>
+            <div>饲料数量: <span id="foodCount" class="food-count">0</span></div>
+        </div>
+        
+        <div class="controls">
+            <button id="addFish">添加一条鱼</button>
+            <button id="addFood">添加饲料</button>
+        </div>
+    </div>
+    
+    <div class="floor-water" id="floorWater"></div>
+    
+    <!-- 时间暂停覆盖层 -->
+    <div class="paused-overlay" id="pausedOverlay">时间已暂停</div>
+    
+    <!-- 作弊模式密码输入 -->
+    <div class="cheat-modal" id="cheatModal">
+        <h3>输入作弊密码</h3>
+        <input type="password" id="cheatPassword" placeholder="输入密码">
+        <button id="submitCheat">确认</button>
+    </div>
+    
+    <!-- 障碍物面板 -->
+    <div class="obstacle-panel" id="obstaclePanel">
+        <div class="obstacle-panel-header">作弊控制面板</div>
+        <div class="obstacle-list">
+            <div class="obstacle-item" data-type="circle">圆形障碍</div>
+            <div class="obstacle-item" data-type="square">正方形障碍</div>
+            <div class="obstacle-item" data-type="triangle">三角形障碍</div>
+        </div>
+        <button class="place-obstacle-btn" id="placeObstacleBtn">放置障碍</button>
+        
+        <div class="cheat-controls">
+            <div class="cheat-control">
+                <label for="fishLifespan">鱼生存时间(分钟):</label>
+                <input type="number" id="fishLifespan" min="1" max="60" value="10">
+                <button id="applyLifespan">应用</button>
+            </div>
+            
+            <div class="time-controls">
+                <button id="pauseTime">暂停时间</button>
+                <button id="resumeTime">恢复时间</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const aquarium = document.querySelector('.aquarium');
+            const addFishBtn = document.getElementById('addFish');
+            const addFoodBtn = document.getElementById('addFood');
+            const fishCountElem = document.getElementById('fishCount');
+            const foodCountElem = document.getElementById('foodCount');
+            const hammerBtn = document.getElementById('hammerBtn');
+            const floorWater = document.getElementById('floorWater');
+            const water = document.querySelector('.water');
+            const cheatModal = document.getElementById('cheatModal');
+            const cheatPassword = document.getElementById('cheatPassword');
+            const submitCheat = document.getElementById('submitCheat');
+            const obstaclePanel = document.getElementById('obstaclePanel');
+            const obstacleItems = document.querySelectorAll('.obstacle-item');
+            const placeObstacleBtn = document.getElementById('placeObstacleBtn');
+            const fishLifespanInput = document.getElementById('fishLifespan');
+            const applyLifespanBtn = document.getElementById('applyLifespan');
+            const pauseTimeBtn = document.getElementById('pauseTime');
+            const resumeTimeBtn = document.getElementById('resumeTime');
+            const pausedOverlay = document.getElementById('pausedOverlay');
+            
+            let fishCount = 0;
+            let foodCount = 0;
+            let allFish = [];
+            let allFood = [];
+            let deadFishCount = 0;
+            let isBroken = false;
+            let floorWaterHeight = 0;
+            let cheatMode = false;
+            let placingObstacle = false;
+            let currentObstacleType = null;
+            let obstaclePreview = null;
+            let obstacles = [];
+            let followingFish = null;
+            let mouseX = 0;
+            let mouseY = 0;
+            let timePaused = false;
+            let globalLifespan = 300000; // 10分钟，默认值
+            
+            // 跟踪鼠标位置
+            document.addEventListener('mousemove', function(e) {
+                if (timePaused) return;
+                
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                // 更新障碍物预览位置
+                if (placingObstacle && obstaclePreview) {
+                    const containerRect = isBroken ? floorWater.getBoundingClientRect() : aquarium.getBoundingClientRect();
+                    const xPercent = ((mouseX - containerRect.left) / containerRect.width) * 100;
+                    const yPercent = ((mouseY - containerRect.top) / containerRect.height) * 100;
+                    
+                    obstaclePreview.style.left = `${xPercent}%`;
+                    obstaclePreview.style.top = `${yPercent}%`;
+                }
+                
+                // 随机选择一条鱼跟随鼠标
+                if (allFish.length > 0 && Math.random() < 0.005 && !followingFish) {
+                    const randomFishIndex = Math.floor(Math.random() * allFish.length);
+                    const fish = allFish[randomFishIndex];
+                    if (fish.isAlive && !fish.isFollowing) {
+                        fish.isFollowing = true;
+                        followingFish = fish;
+                        fish.element.classList.add('fish-following');
+                        
+                        // 5秒后停止跟随
+                        setTimeout(() => {
+                            if (followingFish) {
+                                followingFish.isFollowing = false;
+                                followingFish.element.classList.remove('fish-following');
+                                followingFish = null;
+                            }
+                        }, 5000);
+                    }
+                }
+                
+                // 更新跟随鼠标的鱼的位置
+                if (followingFish && followingFish.isAlive) {
+                    const containerRect = followingFish.container.getBoundingClientRect();
+                    const xPercent = ((mouseX - containerRect.left) / containerRect.width) * 100;
+                    const yPercent = ((mouseY - containerRect.top) / containerRect.height) * 100;
+                    
+                    // 缓慢移动到鼠标位置
+                    const dx = xPercent - followingFish.x;
+                    const dy = yPercent - followingFish.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance > 2) {
+                        followingFish.xSpeed = dx * 0.05;
+                        followingFish.ySpeed = dy * 0.05;
+                        
+                        // 确保鱼的方向与移动方向一致
+                        if (followingFish.xSpeed > 0 && followingFish.direction < 0) {
+                            followingFish.direction = 1;
+                            followingFish.element.style.transform = `scaleX(1)`;
+                        } else if (followingFish.xSpeed < 0 && followingFish.direction > 0) {
+                            followingFish.direction = -1;
+                            followingFish.element.style.transform = `scaleX(-1)`;
+                        }
+                    }
+                }
+            });
+            
+            // 创建气泡效果
+            function createBubbles() {
+                setInterval(() => {
+                    if (isBroken || timePaused) return;
+                    
+                    const bubble = document.createElement('div');
+                    bubble.className = 'bubble';
+                    
+                    // 随机大小和位置
+                    const size = Math.random() * 15 + 5;
+                    const left = Math.random() * 100;
+                    const duration = Math.random() * 10 + 10;
+                    
+                    bubble.style.width = `${size}px`;
+                    bubble.style.height = `${size}px`;
+                    bubble.style.left = `${left}%`;
+                    bubble.style.animationDuration = `${duration}s`;
+                    
+                    // 将气泡添加到水容器中
+                    document.querySelector('.water-container').appendChild(bubble);
+                    
+                    // 气泡上升后移除
+                    setTimeout(() => {
+                        if (bubble.parentNode) {
+                            bubble.parentNode.removeChild(bubble);
+                        }
+                    }, duration * 1000);
+                }, 500);
+            }
+            
+            // 添加鱼
+            function addFish() {
+                const fish = document.createElement('div');
+                fish.className = 'fish';
+                
+                // 根据是否破裂决定鱼的初始位置
+                let left, top;
+                if (isBroken) {
+                    // 在底部水域随机位置
+                    left = Math.random() * 100;
+                    top = 100 - (Math.random() * floorWaterHeight * 0.8);
+                } else {
+                    // 在鱼缸中随机位置
+                    left = Math.random() * 80 + 10;
+                    top = Math.random() * 60 + 20;
+                }
+                
+                fish.style.left = `${left}%`;
+                fish.style.top = `${top}%`;
+                
+                // 随机颜色
+                const hue = Math.random() * 60 + 10; // 橙色到红色范围
+                
+                // 创建鱼的身体部件
+                const fishBody = document.createElement('div');
+                fishBody.className = 'fish-body';
+                fishBody.style.background = `linear-gradient(45deg, hsl(${hue}, 100%, 50%), hsl(${hue + 20}, 100%, 45%))`;
+                
+                const fishTail = document.createElement('div');
+                fishTail.className = 'fish-tail';
+                fishTail.style.background = `linear-gradient(to right, hsl(${hue + 20}, 100%, 45%), hsl(${hue + 10}, 100%, 50%))`;
+                
+                const fishFin = document.createElement('div');
+                fishFin.className = 'fish-fin';
+                fishFin.style.background = `hsl(${hue}, 100%, 50%)`;
+                
+                const fishEye = document.createElement('div');
+                fishEye.className = 'fish-eye';
+                
+                fish.appendChild(fishBody);
+                fish.appendChild(fishTail);
+                fish.appendChild(fishFin);
+                fish.appendChild(fishEye);
+                
+                // 根据是否破裂决定鱼的容器
+                if (isBroken) {
+                    floorWater.appendChild(fish);
+                } else {
+                    aquarium.appendChild(fish);
+                }
+                
+                // 设置鱼的初始方向
+                const direction = Math.random() > 0.5 ? 1 : -1;
+                fish.style.transform = `scaleX(${direction})`;
+                
+                // 鱼的移动
+                let x = left;
+                let y = top;
+                let xSpeed = (Math.random() * 0.3 + 0.1) * direction;
+                let ySpeed = (Math.random() * 0.2 - 0.1);
+                
+                // 鱼的属性
+                const fishObj = {
+                    element: fish,
+                    x: x,
+                    y: y,
+                    xSpeed: xSpeed,
+                    ySpeed: ySpeed,
+                    direction: direction,
+                    isAlive: true,
+                    birthTime: Date.now(),
+                    lifeSpan: globalLifespan,
+                    hunger: 0,
+                    isEating: false,
+                    isAgitated: false,
+                    isFollowing: false,
+                    originalSpeed: { x: xSpeed, y: ySpeed },
+                    container: isBroken ? floorWater : aquarium,
+                    animationId: null
+                };
+                
+                allFish.push(fishObj);
+                fishCount++;
+                updateCounts();
+                
+                // 鱼的移动动画
+                function moveFish() {
+                    if (timePaused) {
+                        fishObj.animationId = requestAnimationFrame(moveFish);
+                        return;
+                    }
+                    
+                    if (!fishObj.isAlive) {
+                        // 鱼死亡后沉底
+                        if (y < (isBroken ? 100 - floorWaterHeight + 10 : 85)) {
+                            y += 0.05;
+                            fish.style.top = `${y}%`;
+                            fishObj.animationId = requestAnimationFrame(moveFish);
+                        } else {
+                            // 沉底后标记为可清理
+                            fish.classList.add('dead-fish');
+                            fish.style.cursor = 'pointer';
+                            fish.addEventListener('click', removeDeadFish);
+                            
+                            // 更新死鱼数量
+                            deadFishCount++;
+                            updateFishAgitation();
+                            
+                            // 如果不清理，鱼会腐烂
+                            setTimeout(() => {
+                                if (fish.parentNode && fishObj.isAlive === false) {
+                                    fish.style.opacity = '0.5';
+                                    fish.style.filter = 'grayscale(1) brightness(0.5)';
+                                }
+                            }, 5000); // 30秒后开始腐烂
+                        }
+                        return;
+                    }
+                    
+                    // 如果鱼正在跟随鼠标，跳过常规移动逻辑
+                    if (fishObj.isFollowing && fishObj === followingFish) {
+                        fishObj.animationId = requestAnimationFrame(moveFish);
+                        return;
+                    }
+                    
+                    // 检查是否有死鱼，如果有，活鱼会显得不安
+                    if (deadFishCount > 0 && !fishObj.isAgitated) {
+                        fishObj.isAgitated = true;
+                        fishObj.xSpeed = fishObj.originalSpeed.x * 1.5;
+                        fishObj.ySpeed = fishObj.originalSpeed.y * 1.5;
+                        fish.style.filter = 'brightness(1.2)';
+                    } else if (deadFishCount === 0 && fishObj.isAgitated) {
+                        fishObj.isAgitated = false;
+                        fishObj.xSpeed = fishObj.originalSpeed.x;
+                        fishObj.ySpeed = fishObj.originalSpeed.y;
+                        fish.style.filter = 'brightness(1)';
+                    }
+                    
+                    // 检查是否到达边界
+                    const boundaryLeft = 5;
+                    const boundaryRight = 95;
+                    const boundaryTop = isBroken ? 100 - floorWaterHeight + 5 : 10;
+                    const boundaryBottom = isBroken ? 95 : 80;
+                    
+                    if (x <= boundaryLeft || x >= boundaryRight) {
+                        xSpeed = -xSpeed;
+                        fishObj.direction = -fishObj.direction;
+                        fish.style.transform = `scaleX(${fishObj.direction})`;
+                    }
+                    
+                    if (y <= boundaryTop || y >= boundaryBottom) {
+                        ySpeed = -ySpeed;
+                    }
+                    
+                    // 避开死鱼
+                    if (deadFishCount > 0) {
+                        for (const otherFish of allFish) {
+                            if (!otherFish.isAlive) {
+                                const dx = otherFish.x - x;
+                                const dy = otherFish.y - y;
+                                const distance = Math.sqrt(dx * dx + dy * dy);
+                                
+                                if (distance < 20) {
+                                    // 太靠近死鱼，远离它
+                                    xSpeed = (dx < 0 ? 0.2 : -0.2) * (fishObj.isAgitated ? 1.5 : 1);
+                                    ySpeed = (dy < 0 ? 0.15 : -0.15) * (fishObj.isAgitated ? 1.5 : 1);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 避开障碍物
+                    if (cheatMode && obstacles.length > 0) {
+                        for (const obstacle of obstacles) {
+                            const dx = obstacle.x - x;
+                            const dy = obstacle.y - y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            // 简单的障碍物回避逻辑
+                            if (distance < 15) {
+                                xSpeed = (dx < 0 ? 0.2 : -0.2);
+                                ySpeed = (dy < 0 ? 0.15 : -0.15);
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // 寻找食物
+                    if (!fishObj.isEating && allFood.length > 0) {
+                        const nearestFood = findNearestFood(x, y);
+                        if (nearestFood) {
+                            const dx = nearestFood.x - x;
+                            const dy = nearestFood.y - y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (distance < 15) {
+                                // 接近食物，去吃
+                                xSpeed = dx * 0.015;
+                                ySpeed = dy * 0.015;
+                                
+                                // 确保鱼的方向与移动方向一致
+                                if (xSpeed > 0 && fishObj.direction < 0) {
+                                    fishObj.direction = 1;
+                                    fish.style.transform = `scaleX(1)`;
+                                } else if (xSpeed < 0 && fishObj.direction > 0) {
+                                    fishObj.direction = -1;
+                                    fish.style.transform = `scaleX(-1)`;
+                                }
+                                
+                                if (distance < 5) {
+                                    // 吃到食物
+                                    fishObj.isEating = true;
+                                    eatFood(fishObj, nearestFood);
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 更新位置
+                    x += xSpeed;
+                    y += ySpeed;
+                    
+                    fish.style.left = `${x}%`;
+                    fish.style.top = `${y}%`;
+                    
+                    // 随机改变方向
+                    if (Math.random() < 0.01) {
+                        xSpeed = (Math.random() * 0.3 + 0.1) * fishObj.direction;
+                        fishObj.originalSpeed.x = xSpeed;
+                    }
+                    if (Math.random() < 0.02) {
+                        ySpeed = (Math.random() * 0.2 - 0.1);
+                        fishObj.originalSpeed.y = ySpeed;
+                    }
+                    
+                    // 确保鱼的方向与移动方向一致
+                    if (xSpeed > 0 && fishObj.direction < 0) {
+                        fishObj.direction = 1;
+                        fish.style.transform = `scaleX(1)`;
+                    } else if (xSpeed < 0 && fishObj.direction > 0) {
+                        fishObj.direction = -1;
+                        fish.style.transform = `scaleX(-1)`;
+                    }
+                    
+                    // 检查生命周期
+                    if (Date.now() - fishObj.birthTime > fishObj.lifeSpan) {
+                        fishObj.isAlive = false;
+                        fish.style.transition = 'all 2s';
+                    }
+                    
+                    fishObj.animationId = requestAnimationFrame(moveFish);
+                }
+                
+                fishObj.animationId = requestAnimationFrame(moveFish);
+            }
+            
+            // 更新鱼的焦虑状态
+            function updateFishAgitation() {
+                for (const fish of allFish) {
+                    if (fish.isAlive) {
+                        if (deadFishCount > 0 && !fish.isAgitated) {
+                            fish.isAgitated = true;
+                            fish.xSpeed = fish.originalSpeed.x * 1.5;
+                            fish.ySpeed = fish.originalSpeed.y * 1.5;
+                            fish.element.style.filter = 'brightness(1.2)';
+                        } else if (deadFishCount === 0 && fish.isAgitated) {
+                            fish.isAgitated = false;
+                            fish.xSpeed = fish.originalSpeed.x;
+                            fish.ySpeed = fish.originalSpeed.y;
+                            fish.element.style.filter = 'brightness(1)';
+                        }
+                    }
+                }
+            }
+            
+            // 寻找最近的食物 - 修复对底部饲料的兴趣问题
+            function findNearestFood(fishX, fishY) {
+                let nearestFood = null;
+                let minDistance = Infinity;
+                
+                for (const food of allFood) {
+                    if (food.isEaten) continue;
+                    
+                    const dx = food.x - fishX;
+                    const dy = food.y - fishY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        nearestFood = food;
+                    }
+                }
+                
+                return nearestFood;
+            }
+            
+            // 吃食物
+            function eatFood(fish, food) {
+                food.isEaten = true;
+                
+                // 移除食物元素
+                if (food.element.parentNode) {
+                    food.element.parentNode.removeChild(food.element);
+                }
+                
+                // 从数组中移除
+                const index = allFood.indexOf(food);
+                if (index > -1) {
+                    allFood.splice(index, 1);
+                    foodCount--;
+                    updateCounts();
+                }
+                
+                // 吃完后恢复游动
+                setTimeout(() => {
+                    fish.isEating = false;
+                    fish.xSpeed = (Math.random() * 0.3 + 0.1) * fish.direction;
+                    fish.ySpeed = (Math.random() * 0.2 - 0.1);
+                    fish.originalSpeed.x = fish.xSpeed;
+                    fish.originalSpeed.y = fish.ySpeed;
+                }, 1000);
+            }
+            
+            // 添加饲料
+            function addFood() {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const food = document.createElement('div');
+                        food.className = 'food';
+                        
+                        // 根据是否破裂决定饲料的初始位置
+                        let left, top;
+                        if (isBroken) {
+                            // 在底部水域随机位置
+                            left = Math.random() * 100;
+                            top = 100 - (Math.random() * floorWaterHeight * 0.8);
+                        } else {
+                            // 在鱼缸顶部随机位置
+                            left = Math.random() * 80 + 10;
+                            top = 0;
+                        }
+                        
+                        food.style.left = `${left}%`;
+                        food.style.top = `${top}%`;
+                        
+                        // 根据是否破裂决定饲料的容器
+                        if (isBroken) {
+                            floorWater.appendChild(food);
+                        } else {
+                            aquarium.appendChild(food);
+                        }
+                        
+                        // 饲料下落
+                        let topPos = top;
+                        const fallSpeed = Math.random() * 0.5 + 0.3;
+                        
+                        const foodObj = {
+                            element: food,
+                            x: left,
+                            y: topPos,
+                            isEaten: false,
+                            container: isBroken ? floorWater : aquarium
+                        };
+                        
+                        allFood.push(foodObj);
+                        foodCount++;
+                        updateCounts();
+                        
+                        function fall() {
+                            if (foodObj.isEaten || timePaused) return;
+                            
+                            // 根据是否破裂决定下落终点
+                            const bottomLimit = isBroken ? 100 - floorWaterHeight + 5 : 85;
+                            
+                            if (topPos < bottomLimit) {
+                                topPos += fallSpeed;
+                                food.style.top = `${topPos}%`;
+                                foodObj.y = topPos;
+                                requestAnimationFrame(fall);
+                            } else {
+                                // 饲料堆积在底部
+                                food.style.boxShadow = '0 0 3px #ff9800';
+                            }
+                        }
+                        
+                        fall();
+                    }, i * 200);
+                }
+            }
+            
+            // 移除死鱼
+            function removeDeadFish(event) {
+                const deadFish = event.target.closest('.fish');
+                if (deadFish && deadFish.parentNode) {
+                    deadFish.parentNode.removeChild(deadFish);
+                    
+                    // 从数组中移除
+                    const index = allFish.findIndex(fish => fish.element === deadFish);
+                    if (index > -1) {
+                        allFish.splice(index, 1);
+                        fishCount--;
+                        deadFishCount--;
+                        updateCounts();
+                        updateFishAgitation();
+                    }
+                }
+            }
+            
+            // 更新计数显示
+            function updateCounts() {
+                fishCountElem.textContent = fishCount;
+                foodCountElem.textContent = foodCount;
+            }
+            
+            // 创建玻璃碎片
+            function createGlassShards() {
+                const shardCount = 20;
+                const aquariumRect = aquarium.getBoundingClientRect();
+                
+                for (let i = 0; i < shardCount; i++) {
+                    const shard = document.createElement('div');
+                    shard.className = 'glass-shard';
+                    
+                    // 随机大小和位置
+                    const size = Math.random() * 30 + 10;
+                    const left = Math.random() * aquariumRect.width;
+                    const top = Math.random() * aquariumRect.height;
+                    
+                    shard.style.width = `${size}px`;
+                    shard.style.height = `${size}px`;
+                    shard.style.left = `${left}px`;
+                    shard.style.top = `${top}px`;
+                    
+                    // 随机形状
+                    shard.style.clipPath = `polygon(${Math.random()*100}% ${Math.random()*100}%, ${Math.random()*100}% ${Math.random()*100}%, ${Math.random()*100}% ${Math.random()*100}%)`;
+                    
+                    document.body.appendChild(shard);
+                    
+                    // 碎片掉落动画
+                    const fallDistance = Math.random() * 300 + 200;
+                    const fallDuration = Math.random() * 2 + 1;
+                    const rotateAmount = Math.random() * 720 - 360;
+                    
+                    shard.style.transition = `all ${fallDuration}s ease`;
+                    setTimeout(() => {
+                        shard.style.transform = `translateY(${fallDistance}px) rotate(${rotateAmount}deg)`;
+                        shard.style.opacity = '0';
+                    }, 100);
+                    
+                    // 移除碎片
+                    setTimeout(() => {
+                        if (shard.parentNode) {
+                            shard.parentNode.removeChild(shard);
+                        }
+                    }, fallDuration * 1000 + 1000);
+                }
+            }
+            
+            // 鱼缸破裂效果
+            function breakAquarium() {
+                if (isBroken) return;
+                
+                isBroken = true;
+                
+                // 隐藏锤子按钮
+                hammerBtn.style.display = 'none';
+                
+                // 创建玻璃碎片
+                createGlassShards();
+                
+                // 标记鱼缸为破裂状态
+                aquarium.classList.add('aquarium-broken');
+                
+                // 鱼惊慌效果
+                allFish.forEach(fish => {
+                    if (fish.isAlive) {
+                        fish.element.classList.add('panicked-fish');
+                        // 增加鱼的移动速度
+                        fish.xSpeed *= 2;
+                        fish.ySpeed *= 2;
+                    }
+                });
+                
+                // 水位下降动画 - 修复水往上的问题
+                setTimeout(() => {
+                    water.style.height = '0';
+                }, 1000);
+                
+                // 底部水位上升动画
+                setTimeout(() => {
+                    floorWaterHeight = 45; // 页面高度的25%
+                    floorWater.style.height = `${floorWaterHeight}%`;
+                    
+                    // 将鱼和饲料移动到底部水域
+                    allFish.forEach(fish => {
+                        if (fish.container === aquarium) {
+                            aquarium.removeChild(fish.element);
+                            floorWater.appendChild(fish.element);
+                            fish.container = floorWater;
+                        }
+                    });
+                    
+                    allFood.forEach(food => {
+                        if (food.container === aquarium) {
+                            aquarium.removeChild(food.element);
+                            floorWater.appendChild(food.element);
+                            food.container = floorWater;
+                        }
+                    });
+                }, 2000);
+                
+                // 移除惊慌效果
+                setTimeout(() => {
+                    allFish.forEach(fish => {
+                        fish.element.classList.remove('panicked-fish');
+                        // 恢复鱼的正常速度
+                        fish.xSpeed /= 2;
+                        fish.ySpeed /= 2;
+                    });
+                }, 3000);
+            }
+            
+            // 作弊模式功能
+            function activateCheatMode() {
+                cheatMode = true;
+                cheatModal.style.display = 'none';
+                obstaclePanel.style.display = 'block';
+                
+                // 使障碍物面板可拖动
+                makeDraggable(obstaclePanel);
+            }
+            
+            // 使元素可拖动
+            function makeDraggable(element) {
+                let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+                const header = element.querySelector('.obstacle-panel-header');
+                
+                header.onmousedown = dragMouseDown;
+                
+                function dragMouseDown(e) {
+                    e.preventDefault();
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
+                }
+                
+                function elementDrag(e) {
+                    e.preventDefault();
+                    pos1 = pos3 - e.clientX;
+                    pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    element.style.top = (element.offsetTop - pos2) + "px";
+                    element.style.left = (element.offsetLeft - pos1) + "px";
+                }
+                
+                function closeDragElement() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                }
+            }
+            
+            // 选择障碍物类型
+            obstacleItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    obstacleItems.forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+                    currentObstacleType = this.getAttribute('data-type');
+                });
+            });
+            
+            // 开始放置障碍物
+            placeObstacleBtn.addEventListener('click', function() {
+                if (!currentObstacleType) return;
+                
+                placingObstacle = true;
+                
+                // 创建障碍物预览
+                obstaclePreview = document.createElement('div');
+                obstaclePreview.className = `obstacle ${currentObstacleType} preview`;
+                
+                // 设置障碍物大小
+                if (currentObstacleType === 'circle' || currentObstacleType === 'square') {
+                    obstaclePreview.style.width = '50px';
+                    obstaclePreview.style.height = '50px';
+                } else if (currentObstacleType === 'triangle') {
+                    obstaclePreview.style.width = '50px';
+                    obstaclePreview.style.height = '50px';
+                }
+                
+                // 将预览添加到当前容器
+                if (isBroken) {
+                    floorWater.appendChild(obstaclePreview);
+                } else {
+                    aquarium.appendChild(obstaclePreview);
+                }
+            });
+            
+            // 放置障碍物
+            document.addEventListener('mousedown', function(e) {
+                if (placingObstacle && obstaclePreview && e.button === 0) {
+                    // 创建实际障碍物
+                    const obstacle = document.createElement('div');
+                    obstacle.className = `obstacle ${currentObstacleType}`;
+                    
+                    // 设置障碍物大小和位置
+                    if (currentObstacleType === 'circle' || currentObstacleType === 'square') {
+                        obstacle.style.width = '50px';
+                        obstacle.style.height = '50px';
+                    } else if (currentObstacleType === 'triangle') {
+                        obstacle.style.width = '50px';
+                        obstacle.style.height = '50px';
+                    }
+                    
+                    obstacle.style.left = obstaclePreview.style.left;
+                    obstacle.style.top = obstaclePreview.style.top;
+                    
+                    // 添加到当前容器
+                    if (isBroken) {
+                        floorWater.appendChild(obstacle);
+                    } else {
+                        aquarium.appendChild(obstacle);
+                    }
+                    
+                    // 存储障碍物信息
+                    const containerRect = isBroken ? floorWater.getBoundingClientRect() : aquarium.getBoundingClientRect();
+                    const xPercent = parseFloat(obstacle.style.left);
+                    const yPercent = parseFloat(obstacle.style.top);
+                    
+                    obstacles.push({
+                        element: obstacle,
+                        x: xPercent,
+                        y: yPercent,
+                        type: currentObstacleType,
+                        container: isBroken ? floorWater : aquarium
+                    });
+                    
+                    // 移除预览
+                    obstaclePreview.parentNode.removeChild(obstaclePreview);
+                    obstaclePreview = null;
+                    placingObstacle = false;
+                }
+            });
+            
+            // 应用新的生存时间
+            applyLifespanBtn.addEventListener('click', function() {
+                const newLifespan = parseInt(fishLifespanInput.value) * 60000; // 转换为毫秒
+                if (isNaN(newLifespan) || newLifespan < 60000) return;
+                
+                globalLifespan = newLifespan;
+                
+                // 更新所有现有鱼的生存时间
+                allFish.forEach(fish => {
+                    if (fish.isAlive) {
+                        fish.lifeSpan = globalLifespan;
+                    }
+                });
+                
+                alert(`鱼的生存时间已设置为 ${fishLifespanInput.value} 分钟`);
+            });
+            
+            // 暂停时间
+            pauseTimeBtn.addEventListener('click', function() {
+                timePaused = true;
+                document.body.classList.add('paused');
+                pausedOverlay.style.display = 'flex';
+            });
+            
+            // 恢复时间
+            resumeTimeBtn.addEventListener('click', function() {
+                timePaused = false;
+                document.body.classList.remove('paused');
+                pausedOverlay.style.display = 'none';
+                
+                // 重新启动所有鱼的动画
+                allFish.forEach(fish => {
+                    if (fish.isAlive && fish.animationId === null) {
+                        fish.animationId = requestAnimationFrame(function move() {
+                            // 重新实现移动逻辑
+                            fish.animationId = requestAnimationFrame(move);
+                        });
+                    }
+                });
+            });
+            
+            // 事件监听
+            addFishBtn.addEventListener('click', addFish);
+            addFoodBtn.addEventListener('click', addFood);
+            hammerBtn.addEventListener('click', breakAquarium);
+            
+            // 作弊模式事件监听
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'm' && !cheatMode) {
+                    cheatModal.style.display = 'block';
+                }
+            });
+            
+            submitCheat.addEventListener('click', function() {
+                const password = cheatPassword.value;
+                const correctPassword = (fishCount + foodCount).toString();
+                
+                if (password === correctPassword) {
+                    activateCheatMode();
+                } else {
+                    alert('密码错误！');
+                    cheatPassword.value = '';
+                }
+            });
+            
+            // 初始化气泡效果
+            createBubbles();
+            
+            // 初始添加几条鱼
+            setTimeout(() => addFish(), 500);
+            setTimeout(() => addFish(), 1000);
+        });
+    </script>
+</body>
+</html>

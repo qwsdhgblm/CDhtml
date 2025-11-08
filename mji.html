@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M记-官方门户</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #D32F2F;
+            --secondary: #2C3E50;
+            --accent: #FF9800;
+            --light: #F5F5F5;
+            --dark: #333333;
+            --gray: #757575;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: white;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 导航栏样式 */
+        header {
+            background-color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo h1 {
+            font-size: 28px;
+            color: var(--primary);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .logo span {
+            color: var(--accent);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 16px;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .nav-links a:after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent);
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+        
+        /* 英雄区域样式 */
+        .hero {
+            padding: 100px 0;
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
+                        url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .hero h2 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+        
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            color: var(--gray);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn:hover {
+            background-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* 品牌介绍样式 */
+        .brands {
+            padding: 80px 0;
+            background-color: var(--light);
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 60px;
+            color: var(--secondary);
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--accent);
+            margin: 15px auto;
+        }
+        
+        .brands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .brand-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            text-align: center;
+            padding: 30px 20px;
+            cursor: pointer;
+        }
+        
+        .brand-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .brand-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .brand-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .brand-card p {
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+        
+        /* 最新动态样式 */
+        .news {
+            padding: 80px 0;
+        }
+        
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .news-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        
+        .news-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .news-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .news-info {
+            padding: 25px;
+        }
+        
+        .news-date {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .news-info h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .news-info p {
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+        
+        /* 页脚样式 */
+        footer {
+            background-color: var(--secondary);
+            color: white;
+            padding: 60px 0 30px;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+        }
+        
+        .footer-section h3 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+        
+        .footer-section p {
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+        
+        .social-icons a {
+            display: inline-block;
+            margin-right: 15px;
+            color: white;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+        
+        .social-icons a:hover {
+            color: var(--accent);
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h2 {
+                font-size: 32px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .section-title {
+                font-size: 28px;
+            }
+            
+            .brands-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <header>
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <h1>M记<span></span></h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#cy" class="active">首页</a></li>
+                    <li><a href="#brands">旗下品牌</a></li>
+                    <li><a href="#news">最新动态</a></li>
+                    <li><a href="#about">关于我们</a></li>
+                    <li><a href="#contact">联系我们</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="container">
+            <h2 id="cy">欢迎来到M记官网</h2>
+            <p>我们是多元化的，致力于通过创新技术和服务改善人们的生活品质。</p>
+            <a href="#brands" class="btn">探索我们的品牌</a>
+        </div>
+    </section>
+
+    <!-- 旗下品牌 -->
+    <section class="brands" id="brands">
+        <div class="container">
+            <h2 class="section-title">旗下品牌</h2>
+            <div class="brands-grid">
+                <div class="brand-card" onclick="location.href='mjnews.html'">
+                    <div class="brand-icon">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <h3>M记新闻</h3>
+                    <p>为您提供最新、最全面、最客观的新闻报道，涵盖各个领域。</p>
+                    <a href="mjnews.html" class="btn">访问网站</a>
+                </div>
+                <div class="brand-card" onclick="location.href='CD_uzye.html'">
+                    <div class="brand-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3>丑的家电</h3>
+                    <p>重新定义智能家居体验，将尖端科技与人性化设计完美融合。</p>
+                    <a href="CD_uzye.html" class="btn">访问网站</a>
+                </div>
+                <div class="brand-card" onclick="location.href='gamelist.html'">
+                    <div class="brand-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3>M记游戏</h3>
+                    <p>发现您喜爱的游戏，体验轻松愉快的娱乐时光。</p>
+                    <a href="gamelist.html" class="btn">访问网站</a>
+                </div>
+                <div class="brand-card" onclick="location.href='tcbc.html'">
+                    <div class="brand-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3>桃宝</h3>
+                    <p>发现好物，享受购物，精选优质商品满足您的各种需求。</p>
+                    <a href="tcbc.html" class="btn">访问网站</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 最新动态 -->
+    <section class="news" id="news">
+        <div class="container">
+            <h2 class="section-title">最新动态</h2>
+            <div class="news-grid">
+                <div class="news-card" onclick="location.href='mjnews.html'">
+                    <div class="news-image" style="background-image: url('https://images.unsplash.com/photo-1588681664899-f142ff2dc9b1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="news-info">
+                        <div class="news-date">2023年10月20日 • 集团新闻</div>
+                        <h3>M记集团荣获"2023年度创新企业"称号</h3>
+                        <p>凭借在多个领域的创新表现，M记集团荣获年度创新企业称号。</p>
+                        <a href="mjnews.html" class="btn">阅读更多</a>
+                    </div>
+                </div>
+                <div class="news-card" onclick="location.href='CD_uzye.html'">
+                    <div class="news-image" style="background-image: url('https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="news-info">
+                        <div class="news-date">2023年10月15日 • 丑的家电</div>
+                        <h3>丑的家电推出全新智能家居生态系统</h3>
+                        <p>全新智能家居平台，实现家电设备间的无缝连接与智能协作。</p>
+                        <a href="CD_uzye.html" class="btn">阅读更多</a>
+                    </div>
+                </div>
+                <div class="news-card" onclick="location.href='gamelist.html'">
+                    <div class="news-image" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="news-info">
+                        <div class="news-date">2023年10月10日 • M记游戏</div>
+                        <h3>M记游戏发布三款新作，涵盖多种游戏类型</h3>
+                        <p>推出三款全新游戏，包括模拟、动作和休闲类型。</p>
+                        <a href="gamelist.html" class="btn">阅读更多</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>M记集团</h3>
+                    <p>致力于通过创新技术和服务改善人们的生活品质。</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-weibo"></i></a>
+                        <a href="#"><i class="fab fa-weixin"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>快速链接</h3>
+                    <div class="footer-links">
+                        <a href="#brands">旗下品牌</a>
+                        <a href="#news">最新动态</a>
+                        <a href="#about">关于我们</a>
+                        <a href="#contact">联系我们</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>联系我们</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> 广东省广州市海珠区南洲路</p>
+                    <p><i class="fas fa-phone"></i> 114514</p>
+                    <p><i class="fas fa-envelope"></i> qinwasideheguangbolianmeng@outlook.com<br>qwsdhgblm@outlook.com</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 M记集团 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

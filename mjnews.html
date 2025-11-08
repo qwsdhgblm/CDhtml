@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M记新闻 - 最新资讯，尽在掌握</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #D32F2F;
+            --secondary: #F5F5F5;
+            --accent: #FF5722;
+            --text: #333333;
+            --light-text: #757575;
+            --border: #E0E0E0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: white;
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 导航栏样式 */
+        header {
+            background-color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo h1 {
+            font-size: 28px;
+            color: var(--primary);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .logo span {
+            color: var(--accent);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            font-size: 16px;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .nav-links a:after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent);
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-bar input {
+            padding: 8px 15px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            outline: none;
+            width: 200px;
+            transition: all 0.3s;
+        }
+        
+        .search-bar input:focus {
+            width: 250px;
+            border-color: var(--accent);
+        }
+        
+        .search-bar button {
+            background: none;
+            border: none;
+            margin-left: 10px;
+            color: var(--text);
+            cursor: pointer;
+        }
+        
+        /* 英雄区域样式 */
+        .hero {
+            padding: 80px 0;
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
+                        url('https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .hero h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+        
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: var(--light-text);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn:hover {
+            background-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 新闻部分样式 */
+        .news {
+            padding: 60px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 60px;
+            color: var(--text);
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--accent);
+            margin: 15px auto;
+        }
+        
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .news-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+        
+        .news-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .news-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .news-info {
+            padding: 25px;
+        }
+        
+        .news-date {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .news-info h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+        
+        .news-info p {
+            color: var(--light-text);
+            margin-bottom: 20px;
+        }
+        
+        .read-more {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .read-more i {
+            margin-left: 5px;
+            transition: transform 0.3s;
+        }
+        
+        .read-more:hover i {
+            transform: translateX(5px);
+        }
+        
+        /* 热门新闻样式 */
+        .featured-news {
+            padding: 60px 0;
+            background-color: var(--secondary);
+        }
+        
+        .featured-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .main-featured {
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        .side-featured {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .main-news-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+        
+        .main-news-image {
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .main-news-info {
+            padding: 30px;
+        }
+        
+        .side-news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .side-news-item {
+            display: flex;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+        
+        .side-news-image {
+            width: 120px;
+            height: 100px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .side-news-content {
+            padding: 15px;
+            flex: 1;
+        }
+        
+        /* 新闻分类样式 */
+        .categories {
+            padding: 60px 0;
+        }
+        
+        .category-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .category-tab {
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            margin: 0 10px 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .category-tab.active, .category-tab:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* 登录模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 400px;
+            max-width: 90%;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--light-text);
+        }
+        
+        .modal-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--text);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+        
+        .error-message {
+            color: var(--primary);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* 新闻详情页样式 */
+        .news-detail {
+            display: none;
+            padding: 60px 0;
+        }
+        
+        .detail-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .detail-header {
+            margin-bottom: 30px;
+        }
+        
+        .detail-title {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+        
+        .detail-meta {
+            display: flex;
+            color: var(--light-text);
+            margin-bottom: 20px;
+        }
+        
+        .detail-meta span {
+            margin-right: 20px;
+        }
+        
+        .detail-image {
+            height: 400px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .detail-content {
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        
+        .detail-content p {
+            margin-bottom: 20px;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+        
+        .back-button i {
+            margin-right: 8px;
+        }
+        
+        /* 页脚样式 */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 60px 0 30px;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+        }
+        
+        .footer-section h3 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+        
+        .footer-section p {
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+        
+        .social-icons a {
+            display: inline-block;
+            margin-right: 15px;
+            color: white;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+        
+        .social-icons a:hover {
+            color: var(--accent);
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+        
+        .newsletter {
+            display: flex;
+            margin-top: 15px;
+        }
+        
+        .newsletter input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+        
+        .newsletter button {
+            padding: 10px 15px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h2 {
+                font-size: 32px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .section-title {
+                font-size: 28px;
+            }
+            
+            .featured-container {
+                flex-direction: column;
+            }
+            
+            .search-bar input {
+                width: 150px;
+            }
+            
+            .search-bar input:focus {
+                width: 180px;
+            }
+            
+            .detail-title {
+                font-size: 26px;
+            }
+            
+            .detail-image {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <header>
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <h1>M记<span>新闻</span></h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#" class="active">首页</a></li>
+                    <li><a href="#">国内</a></li>
+                    <li><a href="#">国际</a></li>
+                    <li><a href="#">财经</a></li>
+                    <li><a href="#">科技</a></li>
+                    <li><a href="#">体育</a></li>
+                    <li><a href="#">娱乐</a></li>
+                </ul>
+                <div class="search-bar">
+                    <input type="text" placeholder="搜索新闻...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 英雄区域 -->
+
+    <!-- 热门新闻 -->
+    <section class="featured-news">
+        <div class="container">
+            <h2 class="section-title">热门新闻</h2>
+            <div class="featured-container">
+                <div class="main-featured">
+                    <div class="main-news-card" data-id="1">
+                        <div class="main-news-image" style="background-image: url('https://images.unsplash.com/photo-1588681664899-f142ff2dc9b1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                        <div class="main-news-info">
+                            <div class="news-date">2023年10月20日 • 政治</div>
+                            <h3>全球领导人峰会圆满结束，多国达成气候变化合作协议</h3>
+                            <p>在刚刚结束的全球领导人峰会上，各国代表就气候变化问题达成重要共识，承诺在2030年前将碳排放减少50%，并设立专项基金支持发展中国家绿色转型。</p>
+                            <a href="#" class="read-more">阅读全文 <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="side-featured">
+                    <div class="side-news-list">
+                        <div class="side-news-item" data-id="2">
+                            <div class="side-news-image" style="background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                            <div class="side-news-content">
+                                <div class="news-date">2023年10月19日 • 科技</div>
+                                <h4>人工智能新突破，语言模型能力接近人类水平</h4>
+                            </div>
+                        </div>
+                        <div class="side-news-item" data-id="3">
+                            <div class="side-news-image" style="background-image: url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                            <div class="side-news-content">
+                                <div class="news-date">2023年10月18日 • 体育</div>
+                                <h4>国际足球锦标赛决赛落幕，黑马球队意外夺冠</h4>
+                            </div>
+                        </div>
+                        <div class="side-news-item" data-id="4">
+                            <div class="side-news-image" style="background-image: url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                            <div class="side-news-content">
+                                <div class="news-date">2023年10月17日 • 经济</div>
+                                <h4>全球经济复苏超预期，多国央行调整货币政策</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 新闻分类 -->
+    <section class="categories">
+        <div class="container">
+            <h2 class="section-title">新闻分类</h2>
+            <div class="category-tabs">
+                <div class="category-tab active">全部</div>
+                <div class="category-tab">国内</div>
+                <div class="category-tab">国际</div>
+                <div class="category-tab">财经</div>
+                <div class="category-tab">科技</div>
+                <div class="category-tab">体育</div>
+                <div class="category-tab">娱乐</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 新闻列表 -->
+    <section class="news">
+        <div class="container">
+            <h2 class="section-title">最新新闻</h2>
+            <div class="news-grid">
+                <div class="news-card" data-id="5">
+                    <div class="news-image" style="background-image: url('https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="news-info">
+                        <div class="news-date">2025年10月9日 • 科技</div>
+                        <h3>丑的家电荣获"丑的2025年度创新科技大奖"</h3>
+<p>我们的CDF-1智能冰箱凭借革命性的保鲜技术和节能设计，荣获"丑的年度创新科技大奖。"</p>
+                        <a href="#" class="read-more">阅读全文 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="news-card" data-id="6">
+                    <div class="news-image" style="background-image: url('https://images.unsplash.com/photo-1557838923-2985c318be48?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="news-info">
+                        <div class="news-date">2025年10月9日 • 财经</div>
+                        <h3>丑的家电全班旗舰店在二（5）盛大开业</h3>
+                        <p>位于二（5）CBD的全班旗舰店正式开业，为消费者提供全方位的智能家居体验。</p>
+                        <a href="#" class="read-more">阅读全文 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="news-card" data-id="7">
+                    <div class="news-image" style="background-image: url('https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="news-info">
+                        <div class="news-date">2025年9月13日 •科技</div>
+                        <h3>丑的家电与桃宝达成战略合作&nbsp;</h3>
+                        <p>我们与桃宝建立联合运营关系，共同研发下一代智能家电核心技术和营销方式。&nbsp;</p>
+                        <a href="news/news1.html" class="read-more">阅读全文 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="news-card" data-id="8">
+                    <div class="news-image" style="background-image: url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="news-info">
+                        <div class="news-date">2023年10月17日 •财经</div>
+                        <h3>智能家居市场增长迅猛，丑的家电领跑行业</h3>
+                        <p>最新数据显示，智能家居市场年增长率达25%，丑的家电凭借创新产品占据二（5）班市场领先地位。</p>
+                        <a href="#" class="read-more">阅读全文 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="news-card" data-id="9">
+                    <div class="news-image" style="background-image: url('https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="news-info">
+                        <div class="news-date">2023年10月16日 • 科技</div>
+                        <h3>丑的家电推出全新智能家居生态系统</h3>
+                        <p>公司发布全新智能家居平台，实现家电设备间的无缝连接与智能协作。</p>
+                        <a href="#" class="read-more">阅读全文 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="news-card" data-id="10">
+                    <div class="news-image" style="background-image: url('https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="news-info">
+                        <div class="news-date">2023年10月15日 • 环保</div>
+                        <h3>丑的家电获评“m记集团年度绿色企业”，环保理念获认可</h3>
+                        <p>公司因在节能减排和环保生产方面的卓越表现，荣获年度绿色企业称号。</p>
+                        <a href="#" class="read-more">阅读全文 <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 新闻详情页 -->
+    <section class="news-detail" id="news-detail">
+        <div class="container">
+            <div class="detail-container">
+                <a href="#" class="back-button" id="back-button">
+                    <i class="fas fa-arrow-left"></i> 返回新闻列表
+                </a>
+                <div class="detail-header">
+                    <h1 class="detail-title" id="detail-title">新闻标题</h1>
+                    <div class="detail-meta">
+                        <span id="detail-date">2023年10月20日</span>
+                        <span id="detail-category">分类</span>
+                        <span id="detail-author">作者</span>
+                    </div>
+                </div>
+                <div class="detail-image" id="detail-image"></div>
+                <div class="detail-content" id="detail-content">
+                    <!-- 新闻内容将通过JavaScript动态填充 -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 登录模态框 -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <h2 class="modal-title">登录M记新闻</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" class="form-control" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" class="form-control" placeholder="请输入密码">
+                    <div class="error-message" id="login-error">账号或密码错误，请重试</div>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">登录</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>M记新闻</h3>
+                    <p>为您提供最新、最全面、最客观的新闻报道，涵盖各个领域。</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-weibo"></i></a>
+                        <a href="#"><i class="fab fa-weixin"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>快速链接</h3>
+                    <div class="footer-links">
+                        <a href="#">关于我们</a>
+                        <a href="#">联系方式</a>
+                        <a href="#">投稿指南</a>
+                        <a href="#">广告合作</a>
+                        <a href="#">隐私政策</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>订阅新闻</h3>
+                    <p>订阅我们的新闻资讯，第一时间获取最新消息</p>
+                    <div class="newsletter">
+                        <input type="email" placeholder="输入您的邮箱">
+                        <button>订阅</button>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 M记新闻 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 模拟新闻数据
+        const newsData = {
+            1: {
+                title: "全球领导人峰会圆满结束，多国达成气候变化合作协议",
+                date: "2023年10月20日",
+                category: "政治",
+                author: "李明",
+                image: "https://images.unsplash.com/photo-1588681664899-f142ff2dc9b1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                content: `
+                    <p>在刚刚结束的全球领导人峰会上，各国代表就气候变化问题达成重要共识，承诺在2030年前将碳排放减少50%，并设立专项基金支持发展中国家绿色转型。</p>
+                    <p>此次峰会汇集了来自全球120多个国家的领导人，共同商讨应对气候变化的全球战略。经过三天的密集讨论，各国代表最终达成了一项具有里程碑意义的协议。</p>
+                    <p>根据协议内容，发达国家将承担更多的减排责任，同时向发展中国家提供技术和资金支持，帮助其实现绿色转型。协议还规定，各国将每五年审查一次减排目标的实现情况，并根据实际情况进行调整。</p>
+                    <p>联合国秘书长在闭幕式上表示："这是全球气候治理的重要一步。我们看到了各国在应对气候变化问题上的决心和行动。但协议只是开始，真正的挑战在于执行。"</p>
+                    <p>分析人士指出，此次峰会达成的协议将对全球能源结构、产业发展和国际贸易产生深远影响。清洁能源、电动汽车和绿色技术等相关产业预计将迎来快速发展。</p>
+                `
+            },
+            2: {
+                title: "人工智能新突破，语言模型能力接近人类水平",
+                date: "2023年10月19日",
+                category: "科技",
+                author: "王科技",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                content: `
+                    <p>最新研究显示，人工智能语言模型在多项测试中表现接近人类水平，标志着自然语言处理技术取得了重大突破。</p>
+                    <p>这项由多家科技公司联合开展的研究，评估了最新一代语言模型在阅读理解、文本生成和逻辑推理等方面的能力。结果显示，在大多数测试项目中，模型的得分与人类专家相当。</p>
+                    <p>研究人员表示，这一突破得益于模型架构的改进和训练数据的扩展。新模型采用了更高效的注意力机制，能够更好地理解上下文关系和语义细节。</p>
+                    <p>然而，专家也指出，虽然模型在特定任务上表现出色，但在常识推理和创造性思维方面仍有待提升。此外，模型的伦理使用和潜在偏见也是需要关注的问题。</p>
+                    <p>这一技术进步预计将推动智能助手、内容生成和机器翻译等应用的发展，同时也引发了关于人工智能未来发展方向和社会影响的讨论。</p>
+                `
+            },
+            3: {
+                title: "国际足球锦标赛决赛落幕，黑马球队意外夺冠",
+                date: "2023年10月18日",
+                category: "体育",
+                author: "张体育",
+                image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                content: `
+                    <p>在刚刚结束的国际足球锦标赛决赛中，不被看好的北欧球队以3:2战胜卫冕冠军，首次捧起冠军奖杯，创造了本届赛事最大冷门。</p>
+                    <p>比赛在热烈的气氛中进行，双方球员都展现出了高超的技艺和顽强的斗志。上半场双方战成1:1平，下半场更是上演了进球大战，最终北欧球队凭借一记精彩的任意球锁定胜局。</p>
+                    <p>这支北欧球队在本届赛事中一路过关斩将，先后淘汰了多支传统强队。球队主教练在赛后表示："我们一直相信自己能够创造奇迹。球员们付出了百分之百的努力，这个冠军是对他们最好的回报。"</p>
+                    <p>卫冕冠军球队的主教练则对结果表示失望："我们掌控了大部分比赛，但在关键时刻犯了一些错误。祝贺对手，他们配得上这场胜利。"</p>
+                    <p>这场胜利不仅为北欧球队带来了首个国际大赛冠军，也打破了传统强队对足球赛事的垄断，为足球运动的发展注入了新的活力。</p>
+                `
+            },
+            // 其他新闻数据...
+            5: {
+                title: "丑的家电荣获2023年度创新科技大奖",
+                date: "2023年10月20日",
+                category: "科技",
+                author: "陈创新",
+                image: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                content: `
+                    <p>丑的家电公司的CDF-1智能冰箱凭借革命性的保鲜技术和节能设计，荣获2023年度创新科技大奖。</p>
+                    <p>评委会在颁奖词中表示，CDF-1智能冰箱在多个技术领域实现了突破，特别是其智能温控系统和节能技术，为家电行业树立了新的标杆。</p>
+                    <p>丑的家电公司CEO在领奖时表示："这个奖项是对我们团队多年来努力的肯定。我们始终坚持'技术驱动创新'的理念，致力于为用户提供更好的产品体验。"</p>
+                    <p>CDF-1智能冰箱采用了多项专利技术，包括AI智能温控系统、超静音设计和智能互联功能。相比传统冰箱，其能耗降低了40%，保鲜效果提升了30%。</p>
+                    <p>业内专家认为，这一奖项的获得将进一步巩固丑的家电在智能家电领域的领先地位，同时也将推动整个行业的技术创新和产品升级。</p>
+                `
+            }
+        };
+
+        // 登录状态
+        let isLoggedIn = false;
+
+        // DOM加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 登录模态框元素
+            const loginModal = document.getElementById('login-modal');
+            const closeModal = document.getElementById('close-modal');
+            const loginForm = document.getElementById('login-form');
+            const loginError = document.getElementById('login-error');
+            
+            // 订阅按钮
+            const subscribeBtn = document.getElementById('subscribe-btn');
+            
+            // 新闻详情页元素
+            const newsDetail = document.getElementById('news-detail');
+            const backButton = document.getElementById('back-button');
+            
+            // 分类标签
+            const categoryTabs = document.querySelectorAll('.category-tab');
+            
+            // 打开登录模态框
+            function openLoginModal() {
+                loginModal.style.display = 'flex';
+                loginError.style.display = 'none';
+            }
+            
+            // 关闭登录模态框
+            function closeLoginModal() {
+                loginModal.style.display = 'none';
+            }
+            
+            // 订阅按钮点击事件
+            subscribeBtn.addEventListener('click', function() {
+                openLoginModal();
+            });
+            
+            // 关闭模态框事件
+            closeModal.addEventListener('click', closeLoginModal);
+            
+            // 点击模态框外部关闭
+            window.addEventListener('click', function(event) {
+                if (event.target === loginModal) {
+                    closeLoginModal();
+                }
+            });
+            
+            // 登录表单提交事件
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // 模拟登录验证 - 总是显示错误
+                loginError.style.display = 'block';
+                
+                // 清空表单
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            });
+            
+            // 分类标签点击事件
+            categoryTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 如果点击的不是"全部"标签且用户未登录
+                    if (this.textContent !== '全部' && !isLoggedIn) {
+                        openLoginModal();
+                        return;
+                    }
+                    
+                    // 正常处理分类切换
+                    document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 这里可以添加根据分类筛选新闻的逻辑
+                });
+            });
+            
+            // 新闻卡片点击事件 - 显示新闻详情
+            document.querySelectorAll('.news-card, .main-news-card, .side-news-item').forEach(card => {
+                card.addEventListener('click', function() {
+                    const newsId = this.getAttribute('data-id');
+                    if (newsData[newsId]) {
+                        showNewsDetail(newsId);
+                    }
+                });
+            });
+            
+            // 返回按钮点击事件
+            backButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                hideNewsDetail();
+            });
+            
+            // 显示新闻详情
+            function showNewsDetail(newsId) {
+                const news = newsData[newsId];
+                document.getElementById('detail-title').textContent = news.title;
+                document.getElementById('detail-date').textContent = news.date;
+                document.getElementById('detail-category').textContent = news.category;
+                document.getElementById('detail-author').textContent = news.author;
+                document.getElementById('detail-image').style.backgroundImage = `url('${news.image}')`;
+                document.getElementById('detail-content').innerHTML = news.content;
+                
+                // 隐藏新闻列表，显示新闻详情
+                document.querySelector('.hero').style.display = 'none';
+                document.querySelector('.featured-news').style.display = 'none';
+                document.querySelector('.categories').style.display = 'none';
+                document.querySelector('.news').style.display = 'none';
+                document.querySelector('footer').style.display = 'none';
+                newsDetail.style.display = 'block';
+                
+                // 滚动到顶部
+                window.scrollTo(0, 0);
+            }
+            
+            // 隐藏新闻详情
+            function hideNewsDetail() {
+                // 显示新闻列表，隐藏新闻详情
+                document.querySelector('.hero').style.display = 'block';
+                document.querySelector('.featured-news').style.display = 'block';
+                document.querySelector('.categories').style.display = 'block';
+                document.querySelector('.news').style.display = 'block';
+                document.querySelector('footer').style.display = 'block';
+                newsDetail.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

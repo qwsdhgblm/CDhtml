@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏列表</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .search-box input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+        
+        .search-hint {
+            text-align: center;
+            color: #95a5a6;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .game-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+            background-color: #f8f9fa; /* 微微灰色背景 */
+        }
+        
+        .game-image {
+            height: 220px;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: filter 0.3s;
+        }
+        
+        .game-card:hover .game-image {
+            filter: brightness(0.95); /* 图片稍微变暗 */
+        }
+        
+        .game-content {
+            padding: 20px;
+        }
+        
+        .game-title {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .game-description {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #95a5a6;
+            margin-bottom: 15px;
+        }
+        
+        .game-rating {
+            color: #f39c12;
+        }
+        
+        .game-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .tag {
+            background-color: #ecf0f1;
+            color: #7f8c8d;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #95a5a6;
+            grid-column: 1 / -1;
+        }
+        
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #7f8c8d;
+            border-top: 1px solid #ecf0f1;
+        }
+        
+        @media (max-width: 768px) {
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .search-box input {
+                padding: 12px 15px 12px 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>m记游戏</h1>
+            <p class="subtitle">发现您喜爱的游戏</p>
+        </header>
+        
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="搜索游戏名称、描述或标签...">
+            <p class="search-hint">输入关键词搜索您感兴趣的游戏</p>
+        </div>
+        
+        <div class="games-grid" id="gamesGrid">
+            <!-- 鱼缸游戏卡片 -->
+            <a href="fish.html" class="game-card" data-title="梦幻水族馆" data-description="打造属于你的梦幻水族馆，养育各种美丽的鱼儿，体验轻松愉快的养成乐趣。" data-tags="模拟,养成,放松,水族">
+                <div class="game-image" style="background-image: url('img/fish.png');"></div>
+                <div class="game-content">
+                    <h3 class="game-title">梦幻水族馆</h3>
+                    <p class="game-description">养育各种美丽的鱼，体验轻松愉快的养鱼乐趣，创造完美的水下世界。</p>
+                    <div class="game-meta">
+                        <span class="game-rating">
+                            <i class="fas fa-star"></i> 暂无评分
+                        </span>
+                        <span>模拟</span>
+                    </div>
+                    <div class="game-tags">
+                        <span class="tag">模拟</span>
+                        <span class="tag">休闲</span>
+                        <span class="tag">水族</span>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- 东方风格STG游戏卡片 -->
+            <a href="touhou.html" class="game-card" data-title="东方幻梦录" data-description="经典的弹幕射击游戏，体验华丽的弹幕和刺激的战斗，探索幻想乡的秘密。" data-tags="弹幕射击,动作,东方,幻想">
+                <div class="game-image" style="background-image: url('img/th.png');"></div>
+                <div class="game-content">
+                    <h3 class="game-title">东方风格stg（弹幕射击游戏）</h3>
+                    <p class="game-description">经典ip的同人弹幕射击游戏，体验华丽的弹幕和刺激的战斗。操控角色博丽灵梦躲避密集的弹幕，击败强大的敌人。</p>
+                    <div class="game-meta">
+                        <span class="game-rating">
+                            <i class="fas fa-star"></i> 暂无评分
+                        </span>
+                        <span>弹幕射击 / 动作</span>
+                    </div>
+                    <div class="game-tags">
+                        <span class="tag">弹幕射击</span>
+                        <span class="tag">动作</span>
+                        <span class="tag">东方</span>
+                    </div>
+                </div>
+            </a>
+        
+
+        <a href="music!.html" class="game-card" data-title="东方幻梦录" data-description="经典的弹幕射击游戏，体验华丽的弹幕和刺激的战斗，探索幻想乡的秘密。" data-tags="弹幕射击,动作,东方,幻想">
+                <div class="game-image" style="background-image: url('img/mggg.png');"></div>
+                <div class="game-content">
+                    <h3 class="game-title">音乐猜猜猜</h3>
+                    <p class="game-description">看看你对自己喜欢的歌的了解程度吧！</p>
+                    <div class="game-meta">
+                        <span class="game-rating">
+                            <i class="fas fa-star"></i> 暂无评分
+                        </span>
+                        <span>猜谜 / 解题</span>
+                    </div>
+                    <div class="game-tags">
+                        <span class="tag">音乐</span>
+                        <span class="tag">猜谜</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <footer>
+            <p>&copy; 2025 m记游戏 | 保留所有权利</p>
+            <p style="font-size: 1vh;">以防你不知道，m记游戏都可以按m键作弊</p>
+        </footer>
+    </div>
+</div>
+    <script>
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            const gameCards = document.querySelectorAll('.game-card');
+            let hasVisibleCards = false;
+            
+            gameCards.forEach(card => {
+                const title = card.getAttribute('data-title').toLowerCase();
+                const description = card.getAttribute('data-description').toLowerCase();
+                const tags = card.getAttribute('data-tags').toLowerCase();
+                
+                if (title.includes(searchTerm) || 
+                    description.includes(searchTerm) || 
+                    tags.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    hasVisibleCards = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // 显示无结果提示
+            const noResults = document.getElementById('noResults');
+            if (!hasVisibleCards) {
+                if (!noResults) {
+                    const noResultsDiv = document.createElement('div');
+                    noResultsDiv.id = 'noResults';
+                    noResultsDiv.className = 'no-results';
+                    noResultsDiv.innerHTML = `
+                        <i class="fas fa-gamepad"></i>
+                        <h3>未找到匹配的游戏</h3>
+                        <p>请尝试使用其他关键词搜索</p>
+                    `;
+                    document.getElementById('gamesGrid').appendChild(noResultsDiv);
+                }
+            } else if (noResults) {
+                noResults.remove();
+            }
+        });
+    </script>
+</body>
+</html>

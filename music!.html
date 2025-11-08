@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐猜猜猜 - 完整版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: background-color 0.5s;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 900px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.5s;
+            border: 1px solid #e0e0e0;
+        }
+        
+        /* 导航栏样式 */
+        .navbar {
+            background: linear-gradient(to right, #4A00E0, #8E2DE2);
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        header {
+            background: linear-gradient(to right, #4A00E0, #8E2DE2);
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .game-area {
+            padding: 30px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .file-input-wrapper {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .file-input-label {
+            display: block;
+            background-color: #4A00E0;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .file-input-label:hover {
+            background-color: #3a00b0;
+        }
+        
+        #folderInput {
+            display: none;
+        }
+        
+        .difficulty-selector {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .difficulty-selector h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .difficulty-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .difficulty-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 80px;
+        }
+        
+        .difficulty-btn.active {
+            background-color: #4A00E0;
+            color: white;
+        }
+        
+        .difficulty-btn:disabled {
+            background-color: #cccccc;
+            color: #888888;
+            cursor: not-allowed;
+        }
+        
+        .game-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-card {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .info-card h3 {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .info-card .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #4A00E0;
+        }
+        
+        .info-card .streak {
+            color: #51cf66;
+        }
+        
+        .info-card .wrong {
+            color: #ff6b6b;
+        }
+        
+        .player {
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .player h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .audio-player {
+            width: 100%;
+            margin-bottom: 15px;
+            display: none; /* 隐藏原生播放器 */
+        }
+        
+        .custom-player {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .time-display {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .timer {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #4A00E0;
+            margin-bottom: 15px;
+        }
+        
+        .player-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .play-btn {
+            background-color: #4A00E0;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .play-btn:hover {
+            background-color: #3a00b0;
+        }
+        
+        .play-btn:disabled {
+            background-color: #a0a0a0;
+            cursor: not-allowed;
+        }
+        
+        .hint-btn {
+            background-color: #ffa500;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .hint-btn:hover {
+            background-color: #e69500;
+        }
+        
+        .hint-btn:disabled {
+            background-color: #a0a0a0;
+            cursor: not-allowed;
+        }
+        
+        .end-btn {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .end-btn:hover {
+            background-color: #e55a5a;
+        }
+        
+        .end-btn:disabled {
+            background-color: #a0a0a0;
+            cursor: not-allowed;
+        }
+        
+        .hint-count {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .song-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .song-option {
+            padding: 20px;
+            background-color: #f5f5f5;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        .song-option:hover {
+            background-color: #e9e9e9;
+            transform: translateY(-3px);
+        }
+        
+        .next-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #4A00E0;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        
+        .next-btn:hover {
+            background-color: #3a00b0;
+        }
+        
+        .next-btn:disabled {
+            background-color: #a0a0a0;
+            cursor: not-allowed;
+        }
+        
+        .result-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s;
+        }
+        
+        .result-popup.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .result-content {
+            background: linear-gradient(135deg, #4A00E0, #8E2DE2);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            transform: scale(0.7);
+            transition: transform 0.5s;
+        }
+        
+        .result-popup.active .result-content {
+            transform: scale(1);
+        }
+        
+        .result-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .result-content p {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .result-stats {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .result-stats p {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .result-stats span {
+            font-weight: bold;
+        }
+        
+        .close-result {
+            background-color: white;
+            color: #4A00E0;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        .upload-result {
+            background-color: #ffa500;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        .close-result:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.05);
+        }
+        
+        .upload-result:hover {
+            background-color: #e69500;
+            transform: scale(1.05);
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s;
+        }
+        
+        .error {
+            background-color: #ff6b6b !important;
+            transition: background-color 0.3s;
+        }
+        
+        .correct {
+            background-color: #51cf66 !important;
+            transition: background-color 0.3s;
+        }
+        
+        .auto-play-info {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        /* 彩带效果 */
+        .confetti {
+            position: fixed;
+            width: 8px;
+            height: 16px;
+            background-color: #f00;
+            top: -20px;
+            z-index: 9999;
+            opacity: 0.8;
+        }
+        
+        @keyframes fall {
+            0% {
+                top: -20px;
+                transform: rotate(0deg);
+            }
+            100% {
+                top: 100vh;
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* 排行榜样式 */
+        .leaderboard-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s;
+        }
+        
+        .leaderboard-popup.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .leaderboard-content {
+            background: linear-gradient(135deg, #4A00E0, #8E2DE2);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            transform: scale(0.7);
+            transition: transform 0.5s;
+        }
+        
+        .leaderboard-popup.active .leaderboard-content {
+            transform: scale(1);
+        }
+        
+        .leaderboard-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .leaderboard-table th, .leaderboard-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .leaderboard-table th {
+            font-weight: bold;
+        }
+        
+        .leaderboard-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .close-leaderboard {
+            background-color: white;
+            color: #4A00E0;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .close-leaderboard:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.05);
+        }
+        
+        /* 曲库样式 */
+        .library-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s;
+        }
+        
+        .library-popup.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .library-content {
+            background: linear-gradient(135deg, #4A00E0, #8E2DE2);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            transform: scale(0.7);
+            transition: transform 0.5s;
+        }
+        
+        .library-popup.active .library-content {
+            transform: scale(1);
+        }
+        
+        .library-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .library-list {
+            list-style: none;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .library-item {
+            padding: 15px;
+            margin: 10px 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .library-item:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        .close-library {
+            background-color: white;
+            color: #4A00E0;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .close-library:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 600px) {
+            .song-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-info {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .player-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .player-controls button {
+                width: 100%;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                width: 100%;
+                justify-content: space-around;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 导航栏 -->
+        <div class="navbar">
+            <h1>音乐猜猜猜</h1>
+            <div class="nav-links">
+                <a href="#" class="nav-link active" id="gameLink">游戏</a>
+                <a href="#" class="nav-link" id="libraryLink">曲库</a>
+                <a href="#" class="nav-link" id="leaderboardLink">排行榜</a>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="controls">
+                <div class="file-input-wrapper">
+                    <label for="folderInput" class="file-input-label">选择音乐文件夹</label>
+                    <input type="file" id="folderInput" webkitdirectory directory multiple>
+                </div>
+                
+                <div class="difficulty-selector">
+                    <h3>难度选择</h3>
+                    <div class="difficulty-options">
+                        <button class="difficulty-btn active" data-difficulty="easy">简单 (10秒)</button>
+                        <button class="difficulty-btn" data-difficulty="medium">中等 (5秒)</button>
+                        <button class="difficulty-btn" data-difficulty="hard">困难 (2秒)</button>
+                        <button class="difficulty-btn" data-difficulty="extreme">超困难 (1秒)</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="game-info">
+                <div class="info-card">
+                    <h3>当前得分</h3>
+                    <div class="value" id="scoreValue">0</div>
+                </div>
+                <div class="info-card">
+                    <h3>连对次数</h3>
+                    <div class="value streak" id="streakValue">0</div>
+                </div>
+                <div class="info-card">
+                    <h3>正确次数</h3>
+                    <div class="value" id="correctValue">0</div>
+                </div>
+                <div class="info-card">
+                    <h3>错误次数</h3>
+                    <div class="value wrong" id="wrongValue">0</div>
+                </div>
+            </div>
+            
+            <div class="player">
+                <h3>歌曲片段</h3>
+                <audio id="audioPlayer" class="audio-player"></audio>
+                <div class="custom-player">
+                    <div class="time-display" id="timeDisplay">00:00 / 00:00</div>
+                    <div class="timer" id="timerDisplay">用时: 0秒</div>
+                    <div class="player-controls">
+                        <button id="playClipBtn" class="play-btn" disabled>播放片段</button>
+                        <button id="hintBtn" class="hint-btn" disabled>提示</button>
+                        <button id="endBtn" class="end-btn" disabled>结束本轮</button>
+                    </div>
+                    <div class="hint-count" id="hintCount">本轮已使用提示: 0 次 (本轮扣分: 0)</div>
+                </div>
+                <p class="auto-play-info">下一题将自动播放歌曲片段</p>
+            </div>
+            
+            <div class="song-options" id="songOptions">
+                <!-- 选项将通过JavaScript动态生成 -->
+            </div>
+            
+            <button id="nextBtn" class="next-btn" disabled>下一首</button>
+        </div>
+    </div>
+    
+    <div class="result-popup" id="resultPopup">
+        <div class="result-content">
+            <h2>本轮结束</h2>
+            <div class="result-stats">
+                <p>本轮正确率: <span id="accuracyRate">0%</span></p>
+                <p>本轮使用提示: <span id="resultHints">0次</span></p>
+                <p>本轮扣分: <span id="resultDeduction">0分</span></p>
+                <p>本轮得分: <span id="resultScore">0分</span></p>
+                <p>综合评分: <span id="compositeScore">0</span></p>
+            </div>
+            <p id="resultMessage">请再接再厉！</p>
+            <div>
+                <button class="close-result" id="closeResult">开始下一轮</button>
+                <button class="upload-result" id="uploadResult">上传数据</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="leaderboard-popup" id="leaderboardPopup">
+        <div class="leaderboard-content">
+            <h2>排行榜</h2>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>排名</th>
+                        <th>玩家</th>
+                        <th>综合评分</th>
+                        <th>正确率</th>
+                        <th>难度</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                    <!-- 排行榜数据将通过JavaScript动态生成 -->
+                </tbody>
+            </table>
+            <button class="close-leaderboard" id="closeLeaderboard">关闭</button>
+        </div>
+    </div>
+    
+    <div class="library-popup" id="libraryPopup">
+        <div class="library-content">
+            <h2>曲库</h2>
+            <p>这里是一些示例音乐，您可以直接在浏览器中播放</p>
+            <ul class="library-list" id="libraryList">
+                <!-- 曲库列表将通过JavaScript动态生成 -->
+            </ul>
+            <button class="close-library" id="closeLibrary">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 游戏状态
+            const gameState = {
+                score: 0,
+                currentDifficulty: 'easy',
+                currentSong: null,
+                songs: [],
+                currentClip: null,
+                isPlaying: false,
+                answered: false,
+                streak: 0,
+                correctCount: 0,
+                wrongCount: 0,
+                autoPlayEnabled: true,
+                hintsUsed: 0,
+                hintDeduction: 0,
+                timer: 0,
+                timerInterval: null,
+                currentQuestionHintUsed: false,
+                playTimeout: null, // 播放定时器
+                
+                // 本轮统计
+                roundStats: {
+                    correct: 0,
+                    total: 0,
+                    hintsUsed: 0,
+                    deduction: 0,
+                    score: 0
+                }
+            };
+            
+            // 排行榜数据
+            let leaderboardData = JSON.parse(localStorage.getItem('musicGuessLeaderboard')) || [];
+            
+            // 内置曲库
+            const musicLibrary = [
+                {
+                    name: "示例歌曲1 - 轻快旋律",
+                    url: "https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3"
+                },
+                {
+                    name: "示例歌曲2 - 电子节拍",
+                    url: "https://assets.mixkit.co/music/preview/mixkit-hazy-after-hours-132.mp3"
+                },
+                {
+                    name: "示例歌曲3 - 钢琴独奏",
+                    url: "https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3"
+                },
+                {
+                    name: "示例歌曲4 - 流行节奏",
+                    url: "https://assets.mixkit.co/music/preview/mixkit-memory-lane-577.mp3"
+                },
+                {
+                    name: "示例歌曲5 - 环境音乐",
+                    url: "https://assets.mixkit.co/music/preview/mixkit-serene-view-443.mp3"
+                }
+                // 您可以在这里添加更多示例音乐
+                // 格式: { name: "歌曲名称", url: "音乐文件URL" }
+            ];
+            
+            // DOM元素
+            const folderInput = document.getElementById('folderInput');
+            const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+            const scoreValue = document.getElementById('scoreValue');
+            const streakValue = document.getElementById('streakValue');
+            const correctValue = document.getElementById('correctValue');
+            const wrongValue = document.getElementById('wrongValue');
+            const audioPlayer = document.getElementById('audioPlayer');
+            const playClipBtn = document.getElementById('playClipBtn');
+            const hintBtn = document.getElementById('hintBtn');
+            const endBtn = document.getElementById('endBtn');
+            const hintCount = document.getElementById('hintCount');
+            const timeDisplay = document.getElementById('timeDisplay');
+            const timerDisplay = document.getElementById('timerDisplay');
+            const songOptions = document.getElementById('songOptions');
+            const nextBtn = document.getElementById('nextBtn');
+            const resultPopup = document.getElementById('resultPopup');
+            const closeResult = document.getElementById('closeResult');
+            const uploadResult = document.getElementById('uploadResult');
+            const accuracyRate = document.getElementById('accuracyRate');
+            const resultHints = document.getElementById('resultHints');
+            const resultScore = document.getElementById('resultScore');
+            const resultDeduction = document.getElementById('resultDeduction');
+            const compositeScoreElement = document.getElementById('compositeScore');
+            const resultMessage = document.getElementById('resultMessage');
+            const container = document.querySelector('.container');
+            const leaderboardPopup = document.getElementById('leaderboardPopup');
+            const leaderboardBody = document.getElementById('leaderboardBody');
+            const closeLeaderboard = document.getElementById('closeLeaderboard');
+            const libraryPopup = document.getElementById('libraryPopup');
+            const libraryList = document.getElementById('libraryList');
+            const closeLibrary = document.getElementById('closeLibrary');
+            const gameLink = document.getElementById('gameLink');
+            const libraryLink = document.getElementById('libraryLink');
+            const leaderboardLink = document.getElementById('leaderboardLink');
+            
+            // 难度设置
+            const difficultySettings = {
+                easy: { 
+                    duration: 10, 
+                    label: '简单', 
+                    points: 10, 
+                    coefficient: 30 
+                },
+                medium: { 
+                    duration: 5, 
+                    label: '中等', 
+                    points: 15, 
+                    coefficient: 36 
+                },
+                hard: { 
+                    duration: 2, 
+                    label: '困难', 
+                    points: 20, 
+                    coefficient: 45 
+                },
+                extreme: { 
+                    duration: 1, 
+                    label: '超困难', 
+                    points: 30, 
+                    coefficient: 60 
+                }
+            };
+            
+            // 导航栏事件
+            gameLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                gameLink.classList.add('active');
+                libraryLink.classList.remove('active');
+                leaderboardLink.classList.remove('active');
+                leaderboardPopup.classList.remove('active');
+                libraryPopup.classList.remove('active');
+            });
+            
+            libraryLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                libraryLink.classList.add('active');
+                gameLink.classList.remove('active');
+                leaderboardLink.classList.remove('active');
+                updateLibraryList();
+                libraryPopup.classList.add('active');
+            });
+            
+            leaderboardLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                leaderboardLink.classList.add('active');
+                gameLink.classList.remove('active');
+                libraryLink.classList.remove('active');
+                updateLeaderboard();
+                leaderboardPopup.classList.add('active');
+            });
+            
+            closeLeaderboard.addEventListener('click', function() {
+                leaderboardPopup.classList.remove('active');
+                gameLink.classList.add('active');
+                leaderboardLink.classList.remove('active');
+            });
+            
+            closeLibrary.addEventListener('click', function() {
+                libraryPopup.classList.remove('active');
+                gameLink.classList.add('active');
+                libraryLink.classList.remove('active');
+            });
+            
+            // 文件夹选择事件
+            folderInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files).filter(file => 
+                    file.type.startsWith('audio/') && !file.type.includes('midi')
+                );
+                
+                if (files.length === 0) {
+                    alert('请选择包含音频文件的文件夹！注意：不支持MIDI文件。');
+                    return;
+                }
+                
+                gameState.songs = files;
+                alert(`成功加载 ${files.length} 首歌曲！`);
+                playClipBtn.disabled = false;
+                hintBtn.disabled = false;
+                endBtn.disabled = false;
+                nextBtn.disabled = false;
+                
+                // 禁用难度选择
+                difficultyBtns.forEach(btn => {
+                    if (!btn.classList.contains('active')) {
+                        btn.disabled = true;
+                    }
+                });
+                
+                // 开始第一首歌
+                selectRandomSong();
+            });
+            
+            // 难度选择事件
+            difficultyBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (this.disabled) return;
+                    
+                    difficultyBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    gameState.currentDifficulty = this.dataset.difficulty;
+                    
+                    // 如果已经有歌曲在播放，重新生成片段
+                    if (gameState.currentSong) {
+                        createAudioClip();
+                        
+                        // 如果自动播放启用，则播放新片段
+                        if (gameState.autoPlayEnabled) {
+                            setTimeout(() => {
+                                playClip();
+                            }, 500);
+                        }
+                    }
+                });
+            });
+            
+            // 播放片段按钮
+            playClipBtn.addEventListener('click', function() {
+                playClip();
+            });
+            
+            // 提示按钮
+            hintBtn.addEventListener('click', function() {
+                if (gameState.currentClip && !gameState.answered) {
+                    // 标记本题使用了提示
+                    gameState.currentQuestionHintUsed = true;
+                    
+                    // 增加提示使用次数
+                    gameState.hintsUsed++;
+                    gameState.roundStats.hintsUsed++;
+                    
+                    // 计算提示扣分：第一次不扣分，第二次扣5分，第三次扣10分，以此类推
+                    const deduction = Math.max(0, (gameState.hintsUsed - 1) * 5);
+                    gameState.hintDeduction = deduction;
+                    gameState.roundStats.deduction += deduction;
+                    
+                    // 直接扣除当前得分
+                    gameState.score = Math.max(0, gameState.score - deduction);
+                    scoreValue.textContent = gameState.score;
+                    
+                    // 更新提示显示
+                    hintCount.textContent = `本轮已使用提示: ${gameState.hintsUsed} 次 (本轮扣分: ${gameState.roundStats.deduction})`;
+                    
+                    // 计算新的播放时长：基础时长 + (难度时长/2) * 提示次数
+                    const baseDuration = difficultySettings[gameState.currentDifficulty].duration;
+                    const extraDuration = (baseDuration / 2) * gameState.hintsUsed;
+                    const totalDuration = baseDuration + extraDuration;
+                    
+                    // 清除之前的播放定时器
+                    if (gameState.playTimeout) {
+                        clearTimeout(gameState.playTimeout);
+                    }
+                    
+                    // 播放扩展片段
+                    audioPlayer.currentTime = gameState.currentClip.startTime;
+                    audioPlayer.play();
+                    
+                    // 设置定时停止播放
+                    gameState.playTimeout = setTimeout(() => {
+                        if (!audioPlayer.paused) {
+                            audioPlayer.pause();
+                        }
+                    }, totalDuration * 1000);
+                    
+                    // 更新时间显示
+                    updateTimeDisplay(0, totalDuration);
+                }
+            });
+            
+            // 结束本轮按钮
+            endBtn.addEventListener('click', function() {
+                stopTimer();
+                // 创建大量彩带效果
+                createMassiveConfetti();
+                // 显示本轮结果
+                setTimeout(() => {
+                    showRoundResult();
+                }, 1000);
+            });
+            
+            // 下一首按钮
+            nextBtn.addEventListener('click', function() {
+                if (!gameState.answered) {
+                    // 未作答点下一题算错
+                    gameState.answered = true;
+                    stopTimer();
+                    
+                    // 增加本轮总题数
+                    gameState.roundStats.total++;
+                    
+                    // 更新游戏状态
+                    gameState.streak = 0;
+                    gameState.wrongCount++;
+                    
+                    // 更新UI
+                    streakValue.textContent = gameState.streak;
+                    wrongValue.textContent = gameState.wrongCount;
+                    
+                    // 显示正确答案
+                    const correctOption = Array.from(songOptions.children).find(
+                        el => el.textContent === gameState.currentSong.name.replace(/\.[^/.]+$/, "")
+                    );
+                    if (correctOption) {
+                        correctOption.classList.add('correct');
+                    }
+                    
+                    // 抖动效果
+                    container.classList.add('shake');
+                    document.body.style.backgroundColor = '#ff6b6b';
+                    
+                    setTimeout(() => {
+                        container.classList.remove('shake');
+                        document.body.style.backgroundColor = '';
+                    }, 1000);
+                    
+                    // 自动进入下一题
+                    setTimeout(() => {
+                        selectRandomSong();
+                        resetOptions();
+                        gameState.answered = false;
+                    }, 2000);
+                } else {
+                    selectRandomSong();
+                    resetOptions();
+                    gameState.answered = false;
+                }
+            });
+            
+            // 关闭结果弹窗
+            closeResult.addEventListener('click', function() {
+                resultPopup.classList.remove('active');
+                // 开始下一轮
+                startNewRound();
+            });
+            
+            // 上传数据按钮
+            uploadResult.addEventListener('click', function() {
+                const playerName = prompt('请输入您的昵称:', '玩家' + Math.floor(Math.random() * 1000));
+                if (playerName) {
+                    // 计算综合评分
+                    const compositeScore = calculateCompositeScore();
+                    
+                    // 添加到排行榜
+                    leaderboardData.push({
+                        name: playerName,
+                        compositeScore: compositeScore,
+                        accuracy: Math.round((gameState.roundStats.correct / gameState.roundStats.total) * 100),
+                        difficulty: gameState.currentDifficulty,
+                        date: new Date().toLocaleDateString()
+                    });
+                    
+                    // 按综合评分排序
+                    leaderboardData.sort((a, b) => b.compositeScore - a.compositeScore);
+                    
+                    // 保存到本地存储
+                    localStorage.setItem('musicGuessLeaderboard', JSON.stringify(leaderboardData));
+                    
+                    alert('数据上传成功！');
+                    resultPopup.classList.remove('active');
+                    
+                    // 显示排行榜
+                    updateLeaderboard();
+                    leaderboardPopup.classList.add('active');
+                    gameLink.classList.remove('active');
+                    leaderboardLink.classList.add('active');
+                    
+                    // 开始下一轮
+                    startNewRound();
+                }
+            });
+            
+            // 计算综合评分
+            function calculateCompositeScore() {
+                const difficultyCoefficient = difficultySettings[gameState.currentDifficulty].coefficient;
+                const correctQuestions = gameState.roundStats.correct;
+                const totalQuestions = gameState.roundStats.total;
+                const actualScore = gameState.roundStats.score;
+                const maxPossibleScore = difficultySettings[gameState.currentDifficulty].points * totalQuestions;
+                
+                // 综合评分 = 难度系数 + (正确题数 ÷ 总题数) × 40 + (实际得分 ÷ (单题分值 × 总题数)) × 30
+                const accuracyPart = (correctQuestions / totalQuestions) * 40;
+                const scorePart = maxPossibleScore > 0 ? (actualScore / maxPossibleScore) * 30 : 0;
+                const compositeScore = Math.round(difficultyCoefficient + accuracyPart + scorePart);
+                
+                return compositeScore;
+            }
+            
+            // 选择随机歌曲
+            function selectRandomSong() {
+                if (gameState.songs.length === 0) return;
+                
+                const randomIndex = Math.floor(Math.random() * gameState.songs.length);
+                gameState.currentSong = gameState.songs[randomIndex];
+                
+                // 重置本题提示使用状态
+                gameState.currentQuestionHintUsed = false;
+                
+                // 重置计时器
+                gameState.timer = 0;
+                timerDisplay.textContent = `用时: 0秒`;
+                
+                createAudioClip();
+                generateSongOptions();
+                
+                // 自动播放片段
+                if (gameState.autoPlayEnabled) {
+                    setTimeout(() => {
+                        playClip();
+                    }, 500);
+                }
+            }
+            
+            // 创建音频片段
+            function createAudioClip() {
+                if (!gameState.currentSong) return;
+                
+                const audio = new Audio();
+                audio.src = URL.createObjectURL(gameState.currentSong);
+                
+                audio.addEventListener('loadedmetadata', function() {
+                    const duration = audio.duration;
+                    const clipDuration = difficultySettings[gameState.currentDifficulty].duration;
+                    
+                    // 随机选择片段的开始时间，确保不会超过音频长度
+                    const maxStartTime = Math.max(0, duration - clipDuration - 1); // 减1秒作为缓冲
+                    const startTime = Math.random() * maxStartTime;
+                    
+                    gameState.currentClip = {
+                        url: audio.src,
+                        startTime: startTime,
+                        duration: clipDuration,
+                        audioDuration: duration
+                    };
+                    
+                    // 更新时间显示
+                    updateTimeDisplay(0, clipDuration);
+                });
+            }
+            
+            // 播放片段函数
+            function playClip() {
+                if (gameState.currentClip) {
+                    // 清除之前的播放定时器
+                    if (gameState.playTimeout) {
+                        clearTimeout(gameState.playTimeout);
+                    }
+                    
+                    audioPlayer.src = gameState.currentClip.url;
+                    audioPlayer.currentTime = gameState.currentClip.startTime;
+                    audioPlayer.play();
+                    
+                    // 开始计时
+                    startTimer();
+                    
+                    // 设置定时停止播放
+                    const duration = difficultySettings[gameState.currentDifficulty].duration;
+                    gameState.playTimeout = setTimeout(() => {
+                        if (!audioPlayer.paused) {
+                            audioPlayer.pause();
+                        }
+                    }, duration * 1000);
+                    
+                    // 更新时间显示
+                    updateTimeDisplay(0, duration);
+                }
+            }
+            
+            // 开始计时器
+            function startTimer() {
+                if (gameState.timerInterval) {
+                    clearInterval(gameState.timerInterval);
+                }
+                
+                gameState.timer = 0;
+                gameState.timerInterval = setInterval(() => {
+                    gameState.timer++;
+                    timerDisplay.textContent = `用时: ${gameState.timer}秒`;
+                }, 1000);
+            }
+            
+            // 停止计时器
+            function stopTimer() {
+                if (gameState.timerInterval) {
+                    clearInterval(gameState.timerInterval);
+                    gameState.timerInterval = null;
+                }
+            }
+            
+            // 更新时间显示
+            function updateTimeDisplay(current, total) {
+                const formatTime = (seconds) => {
+                    const mins = Math.floor(seconds / 60);
+                    const secs = Math.floor(seconds % 60);
+                    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                };
+                
+                timeDisplay.textContent = `${formatTime(current)} / ${formatTime(total)}`;
+            }
+            
+            // 监听音频播放时间更新
+            audioPlayer.addEventListener('timeupdate', function() {
+                if (gameState.currentClip) {
+                    const currentTime = audioPlayer.currentTime - gameState.currentClip.startTime;
+                    const totalTime = gameState.currentClip.duration;
+                    
+                    if (currentTime >= 0 && currentTime <= totalTime) {
+                        updateTimeDisplay(currentTime, totalTime);
+                    }
+                }
+            });
+            
+            // 生成歌曲选项
+            function generateSongOptions() {
+                if (gameState.songs.length === 0) return;
+                
+                // 清空选项
+                songOptions.innerHTML = '';
+                
+                // 创建选项数组
+                const options = [gameState.currentSong.name.replace(/\.[^/.]+$/, "")]; // 正确答案
+                
+                // 添加错误选项
+                while (options.length < 4) {
+                    const randomIndex = Math.floor(Math.random() * gameState.songs.length);
+                    const wrongOption = gameState.songs[randomIndex].name.replace(/\.[^/.]+$/, "");
+                    
+                    if (!options.includes(wrongOption)) {
+                        options.push(wrongOption);
+                    }
+                }
+                
+                // 随机排序选项
+                shuffleArray(options);
+                
+                // 创建选项元素
+                options.forEach(option => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'song-option';
+                    optionElement.textContent = option;
+                    
+                    optionElement.addEventListener('click', function() {
+                        if (gameState.answered) return;
+                        
+                        gameState.answered = true;
+                        stopTimer();
+                        
+                        // 增加本轮总题数
+                        gameState.roundStats.total++;
+                        
+                        if (option === gameState.currentSong.name.replace(/\.[^/.]+$/, "")) {
+                            // 回答正确
+                            optionElement.classList.add('correct');
+                            
+                            // 更新游戏状态
+                            gameState.streak++;
+                            gameState.correctCount++;
+                            gameState.roundStats.correct++;
+                            
+                            // 如果本题使用了提示，不加分；否则加基础分
+                            let pointsEarned = 0;
+                            if (!gameState.currentQuestionHintUsed) {
+                                pointsEarned = difficultySettings[gameState.currentDifficulty].points;
+                                gameState.score += pointsEarned;
+                                gameState.roundStats.score += pointsEarned;
+                                scoreValue.textContent = gameState.score;
+                            }
+                            
+                            // 更新UI
+                            streakValue.textContent = gameState.streak;
+                            correctValue.textContent = gameState.correctCount;
+                            
+                            // 显示彩带效果
+                            createConfetti();
+                            
+                            // 自动进入下一题
+                            setTimeout(() => {
+                                selectRandomSong();
+                                resetOptions();
+                                gameState.answered = false;
+                            }, 1500);
+                        } else {
+                            // 回答错误
+                            optionElement.classList.add('error');
+                            
+                            // 更新游戏状态
+                            gameState.streak = 0;
+                            gameState.wrongCount++;
+                            
+                            // 更新UI
+                            streakValue.textContent = gameState.streak;
+                            wrongValue.textContent = gameState.wrongCount;
+                            
+                            // 显示正确答案
+                            const correctOption = Array.from(songOptions.children).find(
+                                el => el.textContent === gameState.currentSong.name.replace(/\.[^/.]+$/, "")
+                            );
+                            if (correctOption) {
+                                correctOption.classList.add('correct');
+                            }
+                            
+                            // 抖动效果
+                            container.classList.add('shake');
+                            document.body.style.backgroundColor = '#ff6b6b';
+                            
+                            setTimeout(() => {
+                                container.classList.remove('shake');
+                                document.body.style.backgroundColor = '';
+                            }, 1000);
+                            
+                            // 自动进入下一题
+                            setTimeout(() => {
+                                selectRandomSong();
+                                resetOptions();
+                                gameState.answered = false;
+                            }, 2000);
+                        }
+                    });
+                    
+                    songOptions.appendChild(optionElement);
+                });
+            }
+            
+            // 显示本轮结果
+            function showRoundResult() {
+                // 计算正确率
+                const accuracy = gameState.roundStats.total > 0 ? 
+                    Math.round((gameState.roundStats.correct / gameState.roundStats.total) * 100) : 0;
+                
+                // 计算综合评分
+                const compositeScore = calculateCompositeScore();
+                
+                accuracyRate.textContent = `${accuracy}%`;
+                resultHints.textContent = `${gameState.roundStats.hintsUsed}次`;
+                resultDeduction.textContent = `${gameState.roundStats.deduction}分`;
+                resultScore.textContent = `${gameState.roundStats.score}分`;
+                compositeScoreElement.textContent = compositeScore;
+                
+                // 根据正确率设置消息
+                if (accuracy >= 80) {
+                    resultMessage.textContent = '太棒了！你是音乐达人！';
+                } else if (accuracy >= 60) {
+                    resultMessage.textContent = '不错！继续努力！';
+                } else if (accuracy >= 40) {
+                    resultMessage.textContent = '还有提升空间，加油！';
+                } else {
+                    resultMessage.textContent = '多听音乐，再接再厉！';
+                }
+                
+                resultPopup.classList.add('active');
+            }
+            
+            // 开始新的一轮
+            function startNewRound() {
+                // 重置所有游戏数据
+                gameState.score = 0;
+                gameState.streak = 0;
+                gameState.correctCount = 0;
+                gameState.wrongCount = 0;
+                
+                // 更新UI
+                scoreValue.textContent = gameState.score;
+                streakValue.textContent = gameState.streak;
+                correctValue.textContent = gameState.correctCount;
+                wrongValue.textContent = gameState.wrongCount;
+                
+                // 重置本轮统计
+                gameState.roundStats = {
+                    correct: 0,
+                    total: 0,
+                    hintsUsed: 0,
+                    deduction: 0,
+                    score: 0
+                };
+                
+                // 重置提示计数器
+                gameState.hintsUsed = 0;
+                gameState.hintDeduction = 0;
+                hintCount.textContent = `本轮已使用提示: 0 次 (本轮扣分: 0)`;
+                
+                // 重新启用难度选择
+                difficultyBtns.forEach(btn => {
+                    btn.disabled = false;
+                });
+                
+                // 开始新的一题
+                selectRandomSong();
+                resetOptions();
+                gameState.answered = false;
+            }
+            
+            // 更新曲库列表
+            function updateLibraryList() {
+                libraryList.innerHTML = '';
+                
+                musicLibrary.forEach((music, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'library-item';
+                    listItem.textContent = music.name;
+                    listItem.addEventListener('click', function() {
+                        // 播放选中的音乐
+                        const audio = new Audio(music.url);
+                        audio.play();
+                    });
+                    libraryList.appendChild(listItem);
+                });
+            }
+            
+            // 更新排行榜
+            function updateLeaderboard() {
+                leaderboardBody.innerHTML = '';
+                
+                if (leaderboardData.length === 0) {
+                    leaderboardBody.innerHTML = '<tr><td colspan="5">暂无数据</td></tr>';
+                    return;
+                }
+                
+                leaderboardData.slice(0, 10).forEach((entry, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${entry.name}</td>
+                        <td>${entry.compositeScore}</td>
+                        <td>${entry.accuracy}%</td>
+                        <td>${difficultySettings[entry.difficulty].label}</td>
+                    `;
+                    leaderboardBody.appendChild(row);
+                });
+            }
+            
+            // 重置选项样式
+            function resetOptions() {
+                const options = document.querySelectorAll('.song-option');
+                options.forEach(option => {
+                    option.className = 'song-option';
+                });
+            }
+            
+            // 创建彩带效果
+            function createConfetti() {
+                const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff'];
+                for (let i = 0; i < 100; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+                    document.body.appendChild(confetti);
+                    
+                    // 移除彩带元素
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }
+            }
+            
+            // 创建大量彩带效果
+            function createMassiveConfetti() {
+                const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff'];
+                for (let i = 0; i < 1500; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+                    document.body.appendChild(confetti);
+                    
+                    // 移除彩带元素
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }
+            }
+            
+            // 辅助函数：打乱数组
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+            
+            // 初始化曲库列表
+            updateLibraryList();
+        });
+    </script>
+</body>
+</html>
