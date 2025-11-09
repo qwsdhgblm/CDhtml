@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>东方风格弹幕射击 - 难度选择</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #1a1a2e, #16213e, #0f3460);
+            font-family: 'MS PGothic', 'SimHei', sans-serif;
+            overflow: hidden;
+            color: #fff;
+            touch-action: none;
+            user-select: none;
+        }
+        
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .difficulty-option {
+            position: absolute;
+            width: 280px;
+            height: 140px;
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: center;
+            cursor: default;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transform: translate(100vw, 100vh);
+        }
+        
+        .difficulty-option.active {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            top: 50%;
+            filter: brightness(1);
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.8);
+            border: 2px solid #e94560;
+            z-index: 10;
+        }
+        
+        .difficulty-option.exiting {
+            opacity: 0;
+            transform: translate(-100vw, -100vh) scale(0.8);
+        }
+        
+        .difficulty-option.entering {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            top: 50%;
+        }
+        
+        .difficulty-option img {
+            display: block;
+            max-width: 90%;
+            height: auto;
+        }
+        
+        .instructions {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #aaa;
+            font-size: 18px;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+            z-index: 20;
+        }
+        
+        .title {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            font-size: 36px;
+            text-shadow: 0 0 15px #e94560;
+            z-index: 20;
+        }
+        
+        /* 边框高亮效果 */
+        .difficulty-option.active::before {
+            content: "";
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 2px solid #e94560;
+            border-radius: 15px;
+            z-index: -1;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 20px rgba(233, 69, 96, 0.8); }
+            50% { box-shadow: 0 0 30px rgba(233, 69, 96, 1); }
+            100% { box-shadow: 0 0 20px rgba(233, 69, 96, 0.8); }
+        }
+        
+        /* 背景装饰元素 */
+        .bg-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(233, 69, 96, 0.2) 0%, rgba(233, 69, 96, 0) 70%);
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(100px, 100px) rotate(360deg); }
+        }
+        
+        /* 难度名称显示 */
+        .difficulty-name {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            font-size: 20px;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+            z-index: 5;
+        }
+        
+        /* 当前选中难度提示 */
+        .current-selection {
+            position: absolute;
+            top: 100px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #e94560;
+            font-size: 24px;
+            text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+            z-index: 20;
+        }
+        
+        /* 难度描述 */
+        .difficulty-desc {
+            position: absolute;
+            top: 150px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #aaa;
+            font-size: 16px;
+            z-index: 20;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 方向指示器 */
+        .direction-indicator {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(233, 69, 96, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+            z-index: 15;
+            opacity: 0.7;
+            transition: all 0.3s;
+        }
+        
+        .direction-indicator:hover {
+            opacity: 1;
+            background: rgba(233, 69, 96, 0.6);
+        }
+        
+        .indicator-left {
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .indicator-right {
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">东方风格弹幕射击 - 难度选择
+            <a href="thmb.html" style="color: cadetblue;">我是手机端</a>
+        </div>
+        
+        <div class="current-selection" id="currentSelection">Easy</div>
+        
+        <div class="difficulty-desc" id="difficultyDesc">
+            适合初次接触弹幕射击游戏的玩家，弹幕密度低
+        </div>
+        
+        <!-- 方向指示器 -->
+        
+        
+        
+        <!-- 难度选项 -->
+        <div class="difficulty-option active" id="easy">
+            <img src="img/re.png" alt="Easy">
+            <div class="difficulty-name">Easy</div>
+        </div>
+        
+        <div class="difficulty-option" id="normal">
+            <img src="img/rn.png" alt="Normal">
+            <div class="difficulty-name">Normal</div>
+        </div>
+        
+        <div class="difficulty-option" id="hard">
+            <img src="img/rh.png" alt="Hard">
+            <div class="difficulty-name">Hard</div>
+        </div>
+        
+        <div class="difficulty-option" id="lunatic">
+            <img src="img/rl.png" alt="Lunatic">
+            <div class="difficulty-name">Lunatic</div>
+        </div>
+        
+        <div class="instructions">使用方向键选择难度，Z键确认</div>
+        
+        <!-- 背景装饰 -->
+        <div class="bg-decoration">
+            <div class="bg-circle" style="width: 300px; height: 300px; top: -100px; left: -100px; animation-duration: 25s;"></div>
+            <div class="bg-circle" style="width: 200px; height: 200px; top: 50%; right: -50px; animation-duration: 20s; animation-delay: -5s;"></div>
+            <div class="bg-circle" style="width: 400px; height: 400px; bottom: -200px; left: 50%; animation-duration: 30s; animation-delay: -10s;"></div>
+        </div>
+    </div>
+    
+    <!-- 背景音乐 -->
+    <audio loop autoplay id="bgMusic">
+        <!-- 这里使用占位音频，实际使用时请替换为 au/辉针城.mp3 -->
+        <source src="#" type="audio/mpeg">
+        您的浏览器不支持音频元素。
+    </audio>
+    
+    <script>
+        // 难度选项数据
+        const difficulties = [
+            { 
+                id: 'easy', 
+                name: 'Easy', 
+                desc: '适合初次接触弹幕游戏的玩家，弹幕密度低，自机移动速度快'
+            },
+            { 
+                id: 'normal', 
+                name: 'Normal', 
+                desc: '标准难度，弹幕密度适中，适合有一定经验的玩家'
+            },
+            { 
+                id: 'hard', 
+                name: 'Hard', 
+                desc: '高难度，弹幕密集，需要熟练的躲避技巧'
+            },
+            { 
+                id: 'lunatic', 
+                name: 'Lunatic', 
+                desc: '疯狂难度，弹幕极其密集，只有最熟练的玩家才能应对'
+            }
+        ];
+        
+        // 当前选中的难度索引
+        let currentDifficultyIndex = 0;
+        let isTransitioning = false;
+        
+        // 初始化函数
+        function init() {
+            // 设置初始难度
+            setActiveDifficulty(currentDifficultyIndex);
+            
+            // 尝试播放背景音乐
+            playBackgroundMusic();
+            
+            // 添加键盘事件监听
+            document.addEventListener('keydown', handleKeyDown);
+            
+            // 添加方向指示器点击事件
+            document.querySelector('.indicator-left').addEventListener('click', () => changeDifficulty(-1));
+            document.querySelector('.indicator-right').addEventListener('click', () => changeDifficulty(1));
+        }
+        
+        // 播放背景音乐
+        function playBackgroundMusic() {
+            const bgMusic = document.getElementById('bgMusic');
+            bgMusic.volume = 0.5;
+            
+            // 实际使用时取消下面这行的注释
+            // bgMusic.src = 'au/辉针城.mp3';
+            
+            bgMusic.play().catch(error => {
+                console.log("自动播放被阻止，需要用户交互");
+            });
+        }
+        
+        // 设置活动难度
+        function setActiveDifficulty(index) {
+            // 移除所有活动类
+            difficulties.forEach(difficulty => {
+                const element = document.getElementById(difficulty.id);
+                element.classList.remove('active', 'entering', 'exiting');
+            });
+            
+            // 设置当前难度为活动状态
+            const currentDifficulty = difficulties[index];
+            const currentElement = document.getElementById(currentDifficulty.id);
+            
+            currentElement.classList.add('active');
+            document.getElementById('currentSelection').textContent = currentDifficulty.name;
+            document.getElementById('difficultyDesc').textContent = currentDifficulty.desc;
+        }
+        
+        // 切换难度
+        function changeDifficulty(direction) {
+            if (isTransitioning) return;
+            
+            isTransitioning = true;
+            
+            // 计算新难度索引
+            const newIndex = (currentDifficultyIndex + direction + difficulties.length) % difficulties.length;
+            
+            // 获取当前和新的难度元素
+            const currentElement = document.getElementById(difficulties[currentDifficultyIndex].id);
+            const newElement = document.getElementById(difficulties[newIndex].id);
+            
+            // 设置动画类
+            currentElement.classList.add('exiting');
+            newElement.classList.add('entering');
+            
+            // 更新当前难度索引
+            currentDifficultyIndex = newIndex;
+            
+            // 动画结束后更新状态
+            setTimeout(() => {
+                setActiveDifficulty(currentDifficultyIndex);
+                isTransitioning = false;
+            }, 600);
+        }
+        
+        // 处理键盘输入
+        function handleKeyDown(e) {
+            switch(e.key) {
+                case 'ArrowUp':
+                case 'ArrowLeft':
+                    // 上一个难度
+                    changeDifficulty(-1);
+                    break;
+                    
+                case 'ArrowDown':
+                case 'ArrowRight':
+                    // 下一个难度
+                    changeDifficulty(1);
+                    break;
+                    
+                case 'z':
+                case 'Z':
+                    // 确认选择，跳转到游戏页面
+                    const selectedDifficulty = difficulties[currentDifficultyIndex];
+                    startGame(selectedDifficulty);
+                    break;
+            }
+        }
+        
+        // 开始游戏
+        function startGame(difficulty) {
+            // 根据难度设置游戏参数
+            let gameParams = '';
+            
+            switch(difficulty.id) {
+                case 'easy':
+                    gameParams = '?difficulty=easy';
+                    break;
+                case 'normal':
+                    gameParams = '?difficulty=normal';
+                    break;
+                case 'hard':
+                    gameParams = '?difficulty=hard';
+                    break;
+                case 'lunatic':
+                    gameParams = '?difficulty=lunatic';
+                    break;
+            }
+            
+            // 显示选择确认
+            const selectionElement = document.getElementById('currentSelection');
+            selectionElement.textContent = `已选择: ${difficulty.name} - 按Z键再次确认`;
+            
+             const confirmListener = function(e) {
+        if (e.key === 'z' || e.key === 'Z') {
+            // 根据难度设置不同的游戏页面
+            let gamePage = '';
+            switch(difficulty.id) {
+                case 'easy':
+                    gamePage = 'the.html';
+                    break;
+                case 'normal':
+                    gamePage = 'thn.html';
+                    break;
+                case 'hard':
+                    gamePage = 'thh.html';
+                    break;
+                case 'lunatic':
+                    gamePage = 'thl.html';
+                    break;
+            }
+            
+            // 跳转到游戏页面
+            window.location.href = gamePage + gameParams;
+            
+            // 移除监听器
+            document.removeEventListener('keydown', confirmListener);
+        }
+    };
+    
+    document.addEventListener('keydown', confirmListener);
+}
+        
+        // 初始化
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

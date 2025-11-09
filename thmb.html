@@ -125,7 +125,7 @@
             border: 1px solid #e94560;
         }
         
-        /* 移动控制区域 */
+        /* 移动控制区域 - 简化版 */
         .control-area {
             position: absolute;
             bottom: 20px;
@@ -185,10 +185,23 @@
         .game-controls button:hover {
             background: rgba(76, 201, 240, 1);
         }
+        
+        /* 触摸指示器 */
+        .touch-indicator {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(76, 201, 240, 0.3);
+            border: 2px solid rgba(76, 201, 240, 0.7);
+            pointer-events: none;
+            display: none;
+            z-index: 5;
+        }
     </style>
 </head>
 <body>
-    <a href="deepseek_html_20251108_8c5449.html" class="back-link">返回桌面版</a>
+    <a href="thrank.html" class="back-link">返回难度选择</a>
     
     <div class="game-container">
         <h1 class="game-title">东方风格弹幕射击</h1>
@@ -208,14 +221,17 @@
         
         <canvas id="gameCanvas"></canvas>
         <div class="instructions">
-            在屏幕上任意位置触摸并拖动移动自机 | 自动射击 | 点击按钮使用炸弹/慢速移动
+            触摸并拖动屏幕任意位置移动自机 | 自动射击 | 点击按钮使用炸弹/慢速移动
         </div>
         
-        <!-- 控制区域 -->
+        <!-- 控制区域 - 简化版 -->
         <div class="control-area">
             <div class="action-btn slow" id="slowBtn">慢速</div>
             <div class="action-btn bomb" id="bombBtn">炸弹</div>
         </div>
+        
+        <!-- 触摸指示器 -->
+        <div class="touch-indicator" id="touchIndicator"></div>
         
         <div id="gameOver" class="game-over">
             <h2>游戏结束</h2>
@@ -301,8 +317,10 @@
 
         // 相对触摸控制变量
         let isTouching = false;
-        let lastTouchX = 0;
-        let lastTouchY = 0;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let playerStartX = 0;
+        let playerStartY = 0;
 
         // P点数组
         let pPoints = [];
@@ -364,6 +382,7 @@
             document.getElementById('gamePause').style.display = 'none';
             document.getElementById('bossWarning').style.display = 'none';
             document.getElementById('spellCardName').style.display = 'none';
+            document.getElementById('touchIndicator').style.display = 'none';
             
             updateUI();
             
@@ -1800,50 +1819,59 @@
             }
         }
 
-        // 相对坐标触摸控制 - 类似鼠标
+        // 相对坐标触摸控制 - 改进版
         canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
+            if (gameState.paused || gameState.gameOver) return;
+            
             const touch = e.touches[0];
             const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
             
-            // 直接设置自机位置为触摸点
-            player.x = (touch.clientX - rect.left) * scaleX;
-            player.y = (touch.clientY - rect.top) * scaleY;
-            
-            // 限制自机在屏幕内
-            player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, player.x));
-            player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, player.y));
-            
+            // 记录触摸起始位置和自机起始位置
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            playerStartX = player.x;
+            playerStartY = player.y;
             isTouching = true;
-            lastTouchX = touch.clientX;
-            lastTouchY = touch.clientY;
+            
+            // 显示触摸指示器
+            const indicator = document.getElementById('touchIndicator');
+            indicator.style.display = 'block';
+            indicator.style.left = (touch.clientX - rect.left - 20) + 'px';
+            indicator.style.top = (touch.clientY - rect.top - 20) + 'px';
         });
 
         canvas.addEventListener('touchmove', (e) => {
             if (!isTouching) return;
-            
             e.preventDefault();
+            
             const touch = e.touches[0];
             const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
             
-            // 直接设置自机位置为触摸点
-            player.x = (touch.clientX - rect.left) * scaleX;
-            player.y = (touch.clientY - rect.top) * scaleY;
+            // 计算相对移动距离
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            
+            // 更新自机位置（相对移动）
+            const currentSpeed = gameState.slowMode ? player.slowSpeed : player.speed;
+            player.x = playerStartX + deltaX * 0.5; // 灵敏度调整
+            player.y = playerStartY + deltaY * 0.5;
             
             // 限制自机在屏幕内
             player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, player.x));
             player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, player.y));
             
-            lastTouchX = touch.clientX;
-            lastTouchY = touch.clientY;
+            // 更新触摸指示器位置
+            const indicator = document.getElementById('touchIndicator');
+            indicator.style.left = (touch.clientX - rect.left - 20) + 'px';
+            indicator.style.top = (touch.clientY - rect.top - 20) + 'px';
         });
 
         canvas.addEventListener('touchend', (e) => {
             isTouching = false;
+            
+            // 隐藏触摸指示器
+            document.getElementById('touchIndicator').style.display = 'none';
         });
 
         // 移动设备控制按钮

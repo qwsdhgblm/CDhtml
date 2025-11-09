@@ -215,7 +215,6 @@
 
     <!-- 页脚 -->
     <footer>
-        <a style="size: 50px;" href="">反馈点这里</a>
 		<p style="text-indent: 40vw">仅供娱乐，非真实网站</p>
         <div class="container">
             <div class="footer-content">
@@ -241,6 +240,7 @@
                 <div class="footer-section">
                     <h3>快速链接</h3>
                     <div class="footer-links">
+                        <a href="fdbk.html"><p style="font-size: 5vh;"><strong><em>反馈</em></strong></p></a>
                         <a href="#">产品支持</a>
                         <a href="#">售后服务</a>
                         <a href="#">加盟合作</a>
@@ -255,7 +255,7 @@
     </footer>
 
     <script>
-        // 简单的滚动动画效果
+        // 简单的滚动动画效果和水波纹效果
         document.addEventListener('DOMContentLoaded', function() {
             const fadeElements = document.querySelectorAll('.fade-in');
             
@@ -272,9 +272,11 @@
                 element.style.transition = 'opacity 0.5s ease-in-out';
                 observer.observe(element);
             });
-        }); // 水波纹效果
-            const waterFeature = document.getElementById('waterFeature');
-            
+
+        // 水波纹效果
+        const waterFeature = document.getElementById('waterFeature');
+        
+        if (waterFeature) {
             waterFeature.addEventListener('click', function(e) {
                 // 创建水波纹
                 const ripple = document.createElement('span');
@@ -304,36 +306,37 @@
                     }
                 }, 800);
             });
-            
-            // 创建气泡效果
-            function createBubbles(container, count) {
-                for (let i = 0; i < count; i++) {
+        }
+        
+        // 创建气泡效果
+        function createBubbles(container, count) {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const bubble = document.createElement('span');
+                    bubble.classList.add('water-bubble');
+                    
+                    // 随机大小和位置
+                    const size = Math.random() * 15 + 5;
+                    const left = Math.random() * 80 + 10; // 10% 到 90%
+                    
+                    bubble.style.width = `${size}px`;
+                    bubble.style.height = `${size}px`;
+                    bubble.style.left = `${left}%`;
+                    bubble.style.bottom = '0';
+                    
+                    // 添加到容器
+                    container.appendChild(bubble);
+                    
+                    // 动画结束后移除气泡
                     setTimeout(() => {
-                        const bubble = document.createElement('span');
-                        bubble.classList.add('water-bubble');
-                        
-                        // 随机大小和位置
-                        const size = Math.random() * 15 + 5;
-                        const left = Math.random() * 80 + 10; // 10% 到 90%
-                        
-                        bubble.style.width = `${size}px`;
-                        bubble.style.height = `${size}px`;
-                        bubble.style.left = `${left}%`;
-                        bubble.style.bottom = '0';
-                        
-                        // 添加到容器
-                        container.appendChild(bubble);
-                        
-                        // 动画结束后移除气泡
-                        setTimeout(() => {
-                            if (bubble.parentNode) {
-                                bubble.parentNode.removeChild(bubble);
-                            }
-                        }, 1500);
-                    }, i * 100);
-                }
+                        if (bubble.parentNode) {
+                            bubble.parentNode.removeChild(bubble);
+                        }
+                    }, 1500);
+                }, i * 100);
             }
-        });
+        }
+    });
     </script>
 </body>
 </html>

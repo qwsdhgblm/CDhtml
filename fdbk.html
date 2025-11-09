@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>您的宝贵意见</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body 
+            {
+            animation: hueRotate 3s linear infinite;
+               line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        @keyframes hueRotate {
+            0% {
+                color: hsl(120, 100%, 70%);
+            }
+            16.6% {
+                color: hsl(180, 100%, 70%);
+            }
+            33.3% {
+                color: hsl(240, 100%, 70%);
+            }
+            50% {
+                color: hsl(300, 100%, 70%);
+            }
+            66.6% {
+                color: hsl(360, 100%, 70%);
+            }
+            83.3% {
+                color: hsl(60, 100%, 70%);
+            }
+            100% {
+                color: hsl(120, 100%, 70%);
+            }
+        }
+         
+        
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            
+            animation: hueRotate 3s linear infinite;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        @keyframes hueRotate {
+            0% {
+                color: hsl(120, 100%, 70%);
+            }
+            16.6% {
+                color: hsl(180, 100%, 70%);
+            }
+            33.3% {
+                color: hsl(240, 100%, 70%);
+            }
+            50% {
+                color: hsl(300, 100%, 70%);
+            }
+            66.6% {
+                color: hsl(360, 100%, 70%);
+            }
+            83.3% {
+                color: hsl(60, 100%, 70%);
+            }
+            100% {
+                color: hsl(120, 100%, 70%);
+            }
+        }
+        
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .feedback-form {
+            display: grid;
+            grid-gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #444;
+        }
+        
+        .form-control {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #2575fc;
+            box-shadow: 0 0 0 2px rgba(37, 117, 252, 0.2);
+            outline: none;
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: #2575fc;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            background: #1c65e0;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.3);
+        }
+        
+        .feedback-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 5px;
+        }
+        
+        .feedback-type {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .feedback-type:hover {
+            border-color: #2575fc;
+        }
+        
+        .feedback-type input {
+            margin-right: 8px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .success-message, .error-message {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* 动态颜色变化效果 - 纯CSS实现 */
+        .fk {
+            animation: hueRotate 5s linear infinite;
+        }
+        
+        @keyframes hueRotate {
+            0% {
+                color: hsl(0, 100%, 70%);
+            }
+            16.6% {
+                color: hsl(60, 100%, 70%);
+            }
+            33.3% {
+                color: hsl(120, 100%, 70%);
+            }
+            50% {
+                color: hsl(180, 100%, 70%);
+            }
+            66.6% {
+                color: hsl(240, 100%, 70%);
+            }
+            83.3% {
+                color: hsl(300, 100%, 70%);
+            }
+            100% {
+                color: hsl(360, 100%, 70%);
+            }
+        }
+        .fk2 {
+            animation: hueRotate 3s linear infinite;
+        }
+        
+        @keyframes hueRotate {
+            0% {
+                color: hsl(120, 100%, 70%);
+            }
+            16.6% {
+                color: hsl(180, 100%, 70%);
+            }
+            33.3% {
+                color: hsl(240, 100%, 70%);
+            }
+            50% {
+                color: hsl(300, 100%, 70%);
+            }
+            66.6% {
+                color: hsl(360, 100%, 70%);
+            }
+            83.3% {
+                color: hsl(60, 100%, 70%);
+            }
+            100% {
+                color: hsl(120, 100%, 70%);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .feedback-types {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header fk2">
+            <h1 class="fk">网站反馈</h1>
+            <p class="fk2">您的意见对我们非常重要，感谢您花时间提供反馈</p>
+        </div>
+        
+        <div class="content">
+            <div class="success-message" id="successMessage">
+                感谢您的反馈！我们已经收到您的意见，将尽快处理。
+            </div>
+            
+            <div class="error-message" id="errorMessage">
+                抱歉，提交过程中出现了问题。请稍后重试或直接联系我们。
+            </div>
+            
+            <form class="feedback-form" name="feedback" method="POST" netlify>
+                <div class="form-group">
+                    <label for="name">您的昵称 <p style="color: red;">*</p></label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="请输入您的姓名" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">电子邮箱</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="请输入您的电子邮箱" >
+                </div>
+                
+                <div class="form-group">
+                    <label>反馈类型<p style="color: red;">*</p></label>
+                    <div class="feedback-types">
+                        <label class="feedback-type">
+                            <input type="radio" name="feedback-type" value="bug" required>
+                            错误报告
+                        </label>
+                        <label class="feedback-type">
+                            <input type="radio" name="feedback-type" value="suggestion">
+                            功能建议
+                            
+                        </label>
+                        <label class="feedback-type">
+                            <input type="radio" name="feedback-type" value="complaint">
+                            投诉
+                        </label>
+                        <label class="feedback-type">
+                            <input type="radio" name="feedback-type" value="compliment">
+                            表扬
+                        </label>
+                        <label class="feedback-type">
+                            <input type="radio" name="feedback-type" value="other">
+                            其他
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">详细反馈<p style="color: red;">*</p></label>
+                    <textarea id="message" name="message" class="form-control" placeholder="请详细描述您的反馈内容..." required></textarea>
+                </div>
+                
+                <button type="submit" class="btn">提交反馈</button>
+            </form>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 M记 | 感谢您使用我们的服务</p>
+        </div>
+    </div>
+
+    <script>
+        // 简单的表单提交处理
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 在实际部署中，Netlify会自动处理表单提交
+            // 这里只是模拟成功提交的UI反馈
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // 重置表单
+            setTimeout(() => {
+                this.reset();
+                document.getElementById('successMessage').style.display = 'none';
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
