@@ -212,6 +212,11 @@
             <a href="tcbculpbxlqk.html" class="btn purchase-btn" id="gzmd">立即购买</a>
         </div>
     </section>
+      <!-- ========== 悬浮球 HTML 结构 ========== -->
+    <div class="floating-ball">
+        <div class="ball-icon">AI</div>
+    </div>
+
 
     <!-- 页脚 -->
     <footer>
@@ -337,6 +342,150 @@
             }
         }
     });
+      // ========== 三合一交互逻辑 ==========
+        (function(){
+            const ball = document.querySelector('.floating-ball');
+            // 修改这里：设置你想要跳转的网址
+            const JUMP_URL = 'db.html';
+            const DRAG_THRESHOLD = 5;   // 移动超过5px视为拖拽，否则视为点击
+
+            if (!ball) return;
+
+            let dragStarted = false;
+            let startClientX = 0, startClientY = 0;
+            let startLeft = 0, startTop = 0;
+            let totalMoveX = 0, totalMoveY = 0;
+            let hasMovedThreshold = false;
+
+            // 边界限制函数
+            function constrainBounds(left, top) {
+                const w = ball.offsetWidth;
+                const h = ball.offsetHeight;
+                const maxLeft = window.innerWidth - w;
+                const maxTop = window.innerHeight - h;
+                return {
+                    left: Math.min(Math.max(left, 0), maxLeft),
+                    top: Math.min(Math.max(top, 0), maxTop)
+                };
+            }
+
+            // 设置悬浮球位置（使用 left, top）
+            function setPosition(left, top) {
+                const { left: l, top: t } = constrainBounds(left, top);
+                ball.style.left = l + 'px';
+                ball.style.top = t + 'px';
+                ball.style.right = 'auto';
+                ball.style.bottom = 'auto';
+            }
+
+            // 开始拖拽
+            function onStart(clientX, clientY) {
+                const rect = ball.getBoundingClientRect();
+                startLeft = rect.left;
+                startTop = rect.top;
+                startClientX = clientX;
+                startClientY = clientY;
+                totalMoveX = 0;
+                totalMoveY = 0;
+                hasMovedThreshold = false;
+                dragStarted = true;
+                ball.style.cursor = 'grabbing';
+                document.body.style.userSelect = 'none';
+            }
+
+            // 拖拽移动中
+            function onMove(clientX, clientY) {
+                if (!dragStarted) return;
+                const deltaX = clientX - startClientX;
+                const deltaY = clientY - startClientY;
+                totalMoveX += Math.abs(deltaX);
+                totalMoveY += Math.abs(deltaY);
+                if (!hasMovedThreshold && (totalMoveX > DRAG_THRESHOLD || totalMoveY > DRAG_THRESHOLD)) {
+                    hasMovedThreshold = true;
+                }
+                setPosition(startLeft + deltaX, startTop + deltaY);
+            }
+
+            // 结束拖拽，决定是否跳转
+            function onEnd() {
+                if (dragStarted && !hasMovedThreshold) {
+                    // 没有超出阈值 → 视为点击，跳转页面
+                    window.location.href = JUMP_URL;
+                }
+                dragStarted = false;
+                ball.style.cursor = '';
+                document.body.style.userSelect = '';
+            }
+
+            // ----- 鼠标事件 -----
+            ball.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return;
+                e.preventDefault();
+                onStart(e.clientX, e.clientY);
+
+                function onMouseMove(moveEvent) {
+                    moveEvent.preventDefault();
+                    onMove(moveEvent.clientX, moveEvent.clientY);
+                }
+                function onMouseUp(upEvent) {
+                    onEnd();
+                    window.removeEventListener('mousemove', onMouseMove);
+                    window.removeEventListener('mouseup', onMouseUp);
+                }
+                window.addEventListener('mousemove', onMouseMove);
+                window.addEventListener('mouseup', onMouseUp);
+            });
+
+            // ----- 触摸事件（移动端）-----
+            ball.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                if (!touch) return;
+                onStart(touch.clientX, touch.clientY);
+
+                function onTouchMove(moveEvent) {
+                    moveEvent.preventDefault();
+                    const t = moveEvent.touches[0];
+                    if (t) onMove(t.clientX, t.clientY);
+                }
+                function onTouchEnd(endEvent) {
+                    onEnd();
+                    window.removeEventListener('touchmove', onTouchMove);
+                    window.removeEventListener('touchend', onTouchEnd);
+                    window.removeEventListener('touchcancel', onTouchEnd);
+                }
+                window.addEventListener('touchmove', onTouchMove, { passive: false });
+                window.addEventListener('touchend', onTouchEnd);
+                window.addEventListener('touchcancel', onTouchEnd);
+            });
+
+            // 禁止原生拖拽图片行为
+            ball.addEventListener('dragstart', (e) => e.preventDefault());
+
+            // 初始化位置：右下角（距离边缘20px）
+            function initPosition() {
+                // 先临时用右下角定位，再转换为 left/top 存储
+                ball.style.right = '20px';
+                ball.style.bottom = '20px';
+                ball.style.left = 'auto';
+                ball.style.top = 'auto';
+                const rect = ball.getBoundingClientRect();
+                setPosition(rect.left, rect.top);
+            }
+
+            // 窗口大小变化时重新校正边界
+            window.addEventListener('resize', () => {
+                const rect = ball.getBoundingClientRect();
+                setPosition(rect.left, rect.top);
+            });
+
+            // 确保 DOM 加载完成后初始化位置
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initPosition);
+            } else {
+                initPosition();
+            }
+        })();
     </script>
 </body>
 </html>

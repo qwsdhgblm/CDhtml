@@ -500,3 +500,42 @@ header .dcljye:hover{
 	border: 1px#FFFFFF solid;
 	padding: 0px 60px 0px 0px;
 }
+ /* ========== 悬浮球样式 ========== */
+        .floating-ball {
+            position: fixed;
+            width: 64px;
+            height: 64px;
+            background: radial-gradient(circle at 30% 30%, #ff8c42, #e65c1e);
+            border-radius: 50%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25), 0 0 0 4px rgba(255,255,255,0.3) inset;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            touch-action: none;          /* 优化触摸拖动 */
+            will-change: left, top;
+            transition: transform 0.05s, box-shadow 0.1s;
+        }
+        .floating-ball:active {
+            cursor: grabbing;
+            transform: scale(0.97);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+        }
+        .ball-icon {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            pointer-events: none;        /* 让图标不干扰拖拽事件 */
+        }
+        /* 移动端稍微缩小 */
+        @media (max-width: 600px) {
+            .floating-ball {
+                width: 56px;
+                height: 56px;
+            }
+            .ball-icon {
+                font-size: 24px;
+            }
+        }
